@@ -30,8 +30,8 @@ export class Database extends EventEmitter {
     private clearTable(table: string): Promise<boolean>
     public clearDatabase(): boolean
 
-    public on<K extends keyof DatabaseEvents>(listener: K, ...args: DatabaseEvents[K]): void
-    public once<K extends keyof DatabaseEvents>(listener: K, ...args: DatabaseEvents[K]): void
+    public on<K extends keyof DatabaseEvents>(event: K, listener: (...args: DatabaseEvents[K]) => void): void
+    public once<K extends keyof DatabaseEvents>(event: K, listener: (...args: DatabaseEvents[K]) => void): void
 }
 
 export interface QueryOptions {
