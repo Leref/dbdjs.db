@@ -79,7 +79,7 @@ module.exports = class Database extends EventEmitter {
      */
     _tables() {
         for (const i in this.tables) {
-            if (!this.tables[i].name || this.Regexes.TABLES_PATTERN.test(this.tables[i].name)) throw new DatabaseError(`Table name ${this.tables[i].name} did not match the file regex.`)
+            if (!this.tables[i].name || this.Regexes.TABLES_PATTERN.test(this.tables[i].name)) return;
             
             this.tables[i] = new DatabaseTable(this.tables[i], this)
         }
