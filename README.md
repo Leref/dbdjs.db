@@ -47,27 +47,27 @@ db.connect();
 
 ### Set
 ```js
-await db.set("test", "matthew", "Matthew.");
-await db.set("test", "lewef", "dbdjs.db owner");
+await db.set("test", "apple", "turtle.");
+await db.set("test", "leref", "dbdjs.db owner");
 ```
 
 ### Get
 ```js
-const matthew = await db.get("test", "matthew");
-const lewef = await db.get("test", "lewef");
+const apple = await db.get("test", "apple");
+const leref = await db.get("test", "leref");
 ```
 
 ### Get All
 ```js
-const matthewAndLewef = await db.all("test", {
+const lerefAndApple = await db.all("test", {
   filter: ({ data }) => data.key.includes("w"),
 });
 ```
 
 ### Delete
 ```js
-await db.delete("test", "matthew");
-await db.delete("test", "lewef");
+await db.delete("test", "apple");
+await db.delete("test", "leref");
 ```
 
 ## API
@@ -139,4 +139,4 @@ await db.delete("test", "lewef");
 ## Links
 dbdjs.db was created for [dbd.js](https://www.npmjs.com/package/dbd.js) now available for anyone to learn and use.
 - [Website](https://dbd.js.org)
-- [Discord Server](https://discord.gg/HMUfMXDQsV)
+- [Discord Server](https://dbd.js.org/invite)
