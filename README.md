@@ -139,4 +139,4 @@ await db.delete("test", "leref");
 ## Links
 dbdjs.db was created for [dbd.js](https://www.npmjs.com/package/dbd.js) now available for anyone to learn and use.
 - [Website](https://dbd.js.org)
-- [Discord Server](https://dbd.js.org/invite)
+- [Discord Server](https://discord.com/invite/HMUfMXDQsV)
