@@ -1,0 +1,23 @@
+{
+  "name": "dbdjs.db",
+  "version": "1.0.4",
+  "description": "dbdjs.db - A Database with Speed and Optimization.",
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "node test.js"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security"
+  },
+  "engines": {
+    "node": ">=12.11.0"
+  },
+  "license": "MIT",
+  "keywords": [
+    "dbd.js",
+    "dbdjs",
+    "dbd",
+    "database",
+    "discord"
+  ]
+}
