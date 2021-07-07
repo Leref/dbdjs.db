@@ -14,7 +14,7 @@ const adapters = { encoding: "utf-8" }
  * @param options {DatabaseOptions} the options for the database instance. 
  * @return {Database} the newly connected database instance. 
  */
-module.exports = class Database extends EventEmitter {
+class Database extends EventEmitter {
     constructor(options = DatabaseOptions) {
         super() 
         
@@ -375,14 +375,14 @@ module.exports = class Database extends EventEmitter {
      * Clears a specific table data. 
      * @type {function} 
      * @param table {string} the name of the table to reset. 
-     * @return {Promise<boolean>} Whether the task was executed correctly and the table got reset. 
+     * @returns {Promise<boolean>} Whether the task was executed correctly and the table got reset. 
      */ 
     clearTable(table) {} 
     
     /**
      * Clears all the tables data. 
      * @type {function} 
-     * @return {Promise<boolean>} Whether the database got a successful call on deleting all the data. 
+     * @returns {Promise<boolean>} Whether the database got a successful call on deleting all the data. 
      */ 
     async clearDatabase() {
         this.cache = new Map() 
@@ -423,3 +423,5 @@ module.exports = class Database extends EventEmitter {
         this.emit(this.Events.READY)
     }
 }
+
+module.exports = Database
