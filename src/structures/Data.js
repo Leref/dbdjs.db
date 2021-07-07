@@ -42,7 +42,7 @@ module.exports = class Data {
         /**
          * Whether this key has ttl. 
          * @property 
-         * @type {<number|undefined}>
+         * @type {number|undefined}
          */
         this.ttl = data.ttl 
         
