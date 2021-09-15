@@ -573,7 +573,7 @@ module.exports = class DatabaseTable {
                     continue 
                 }
                 
-                console.log(d.route) 
+                this.db._debug(d.route) 
                 
                 const file = fileCache.get(d.route) || this.db._marshal(fs.readFileSync(this._path(d.route), this.db.Adapters))
                 
