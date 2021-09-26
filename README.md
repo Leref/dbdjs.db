@@ -25,7 +25,7 @@
 - [Links](#links)
 
 ## About
-dbdjs.db is a database that aims to be swift and optimal.
+dbdjs.db is a JSON Database meant for quick and easy saving data values.
 
 ## Examples
 ### Setup
