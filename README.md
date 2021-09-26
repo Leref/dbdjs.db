@@ -27,8 +27,7 @@
 ## About
 dbdjs.db is a JSON Database meant for quick and easy saving data values.
 
-## Examples
-### Setup
+## Setup
 ```js
 const DBDJSDB = require("dbdjs.db");
 const db = new DBDJSDB.Database({
