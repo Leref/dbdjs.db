@@ -1,7 +1,7 @@
 {
   "name": "dbdjs.db",
-  "version": "2.0.1",
-  "description": "dbdjs.db - A Database with Speed and Optimization.",
+  "version": "2.0.2",
+  "description": "dbdjs.db - JSON Database with Speed and Optimization.",
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
@@ -18,6 +18,9 @@
     "dbd.js",
     "dbdjs",
     "dbd",
+    "aoi.js",
+    "aoi",
+    "json",
     "database",
     "discord"
   ]
