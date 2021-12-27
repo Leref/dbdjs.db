@@ -1,39 +1,39 @@
-const QueueStatusManager = require("./QueueStatusManager") 
+const QueueStatusManager = require("./QueueStatusManager")
 
 /**
- * Manages the queue list for each table method. 
- * @type {object} 
- * @name QueueManager 
+ * Manages the queue list for each table method.
+ * @type {object}
+ * @name QueueManager
  */
 module.exports = {
     /**
-     * Data that's ready to be stored into the table database. 
-     * @type {array} 
-     * @property 
+     * Data that's ready to be stored into the table database.
+     * @type {array}
+     * @property
      */
-    set: [], 
+    set: [],
     /**
-     * Requests requiring full database data will be encountered here. 
-     * @type {array} 
-     * @property 
-     */ 
-    all: [], 
-    /**
-     * Keys that are ready to get their info from the table database. 
-     * @type {array} 
-     * @property 
+     * Requests requiring full database data will be encountered here.
+     * @type {array}
+     * @property
      */
-    get: [], 
+    all: [],
     /**
-     * Keys that are ready to be deleted from the table database. 
-     * @type {array} 
-     * @property 
-     */ 
-    delete: [], 
+     * Keys that are ready to get their info from the table database.
+     * @type {array}
+     * @property
+     */
+    get: [],
     /**
-     * Holds the statuses of each table method, view `QueueStatusManager` for more information. 
-     * @type {object} 
-     * @property 
-     */ 
-    status: {...QueueStatusManager} 
+     * Keys that are ready to be deleted from the table database.
+     * @type {array}
+     * @property
+     */
+    delete: [],
+    /**
+     * Holds the statuses of each table method, view `QueueStatusManager` for more information.
+     * @type {object}
+     * @property
+     */
+    status: {...QueueStatusManager}
 }

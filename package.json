@@ -1,6 +1,6 @@
 {
   "name": "dbdjs.db",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "dbdjs.db - JSON Database with Speed and Optimization.",
   "main": "src/index.js",
   "types": "src/index.d.ts",

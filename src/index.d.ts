@@ -6,14 +6,14 @@ export class Database extends EventEmitter {
     maxFileData: number
     debug: boolean
     extension: string
-    force: boolean 
-    cacheMaxSize: number 
+    force: boolean
+    cacheMaxSize: number
     timestamp: boolean
     saveTime: number
     allTime: number
     getTime: number
-    deleteTime: number 
-    cacheRouters: boolean 
+    deleteTime: number
+    cacheRouters: boolean
     readySince: number
     routers: Map<string, string>
     ready: boolean
@@ -21,16 +21,23 @@ export class Database extends EventEmitter {
     constructor(options: DatabaseOptions)
 
     public get uptime(): number | null
+
     public connect(): void
 
     public delete(table: string, key: string): Promise<boolean>
+
     public all(table: string, options?: QueryOptions): Promise<RawData[]>
+
     public set(table: string, key: string, value: any, ttl?: number): Promise<boolean>
+
     public get(table: string, key: string): Promise<Data | undefined>
+
     private clearTable(table: string): Promise<boolean>
+
     public clearDatabase(): boolean
 
     public on<K extends keyof DatabaseEvents>(event: K, listener: (...args: DatabaseEvents[K]) => void): void
+
     public once<K extends keyof DatabaseEvents>(event: K, listener: (...args: DatabaseEvents[K]) => void): void
 }
 
@@ -56,6 +63,7 @@ export class Data {
     constructor(data: RawData, db: Database, method: "get" | "set" | "delete" | "all")
 
     public toJSON(): RawData
+
     public update(data: RawData): Promise<boolean>
 }
 
@@ -67,7 +75,8 @@ export class Table {
 }
 
 
-export class DebugData extends any {}
+export class DebugData extends any {
+}
 
 export interface DatabaseEvents {
     debug: [data: string],
@@ -85,16 +94,14 @@ export interface DatabaseOptions {
     maxFileData?: number
     debug?: boolean
     extension?: string
-    force?: boolean 
-    cacheMaxSize?: number 
+    force?: boolean
+    cacheMaxSize?: number
     timestamp?: boolean
     saveTime?: number
     allTime?: number
     getTime?: number
-    deleteTime?: number 
-    cacheRouters?: boolean 
+    deleteTime?: number
+    cacheRouters?: boolean
 }
 
- module.exports = {
-
-  }
+module.exports = {}
