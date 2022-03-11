@@ -1,0 +1,32 @@
+import { KeyValueJSONOption, KeyValueSetDataOption } from "../typings/interface";
+import { Cacher } from "./cacher";
+import { Data } from "./data";
+import { KeyValue } from "./database";
+import { Queue } from "./queueManager";
+export declare class Table {
+    name: string;
+    path: string;
+    db: KeyValue;
+    queue: Queue;
+    files: string[];
+    references: Map<string, string> | string;
+    cache: Cacher;
+    routers: Record<string, number>;
+    constructor(name: string, path: string, db: KeyValue);
+    _getFiles(): string[];
+    set(key: string, value: KeyValueSetDataOption): Promise<void>;
+    _update(): Promise<void>;
+    _currentFile(): string;
+    connect(): void;
+    _createNewFile(): void;
+    setReference(key: string, file: string): void;
+    _getReferenceDataFromFile(): Record<string, string> | undefined;
+    _createReferencePath(): void;
+    get(key: string): Promise<Data | undefined>;
+    _get(key: string, file: string): Promise<KeyValueJSONOption | undefined>;
+    all(filter?: (key: string, file: string) => boolean, limit?: number): Promise<Record<string, Data>>;
+    delete(key: string): Promise<void>;
+    _deleteUpdate(): Promise<void>;
+    deleteReference(key: string): void;
+    clear(): void;
+}
