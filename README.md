@@ -32,9 +32,7 @@ dbdjs.db is a JSON Database meant for quick and easy saving data values.
 const DBDJSDB = require("dbdjs.db");
 const db = new DBDJSDB.Database({
   path: "database",
-  tables: {{
-    name: "test",
-  }},
+  tables: ["test"],
 });
 
 db.once("ready", () => {
@@ -46,26 +44,28 @@ db.connect();
 
 ### Set
 ```js
-await db.set("test", "apple", "turtle.");
-await db.set("test", "leref", "dbdjs.db owner");
+await db.set("test", "fruits", {
+  value:"apple"
+});
+await db.set("test", "leref", {
+value: "dbdjsdb owner"
+});
 ```
 
 ### Get
 ```js
-const apple = await db.get("test", "apple");
+const apple = await db.get("test", "fruits");
 const leref = await db.get("test", "leref");
 ```
 
 ### Get All
 ```js
-const lerefAndApple = await db.all("test", {
-  filter: ({ data }) => data.key.includes("w"),
-});
+const lerefAndApple = await db.all("test",undefined,2);
 ```
 
 ### Delete
 ```js
-await db.delete("test", "apple");
+await db.delete("test", "fruits");
 await db.delete("test", "leref");
 ```
 
@@ -78,7 +78,7 @@ await db.delete("test", "leref");
 - #set()
   | Params | Return | Description |
   | :--- | :---: | ---: |
-  | table: string, key: string, value: any | Promise\<boolean> | Set method for the database. |
+  | table: string, key: string, value: {value:any,ttl?:number} | Promise\<boolean> | Set method for the database. |
 - #get()
   | Params | Return | Description |
   | :--- | :---: | ---: |
@@ -86,7 +86,7 @@ await db.delete("test", "leref");
 - #all()
   | Params | Return | Description |
   | :--- | :---: | ---: |
-  | table: string, options: [AllOptions](#all-options) | Promise\<[AllData](#all-data)\[]> | GetAll method for the database. |
+  | table: string, filterFunc?: function,limit?:number| Promise\<[AllData](#all-data)\[]> | GetAll method for the database. |
 - #delete()
   | Params | Return | Description |
   | :--- | :---: | ---: |
