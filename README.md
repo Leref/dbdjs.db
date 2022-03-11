@@ -32,9 +32,7 @@ dbdjs.db is a JSON Database meant for quick and easy saving data values.
 const DBDJSDB = require("dbdjs.db");
 const db = new DBDJSDB.Database({
   path: "database",
-  tables: {{
-    name: "test",
-  }},
+  tables: ["test"],
 });
 
 db.once("ready", () => {
