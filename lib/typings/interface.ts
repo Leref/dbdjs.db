@@ -1,3 +1,5 @@
+import { Table } from "../keyvalue/table";
+import { DatabaseEvents } from "./enums";
 import {
   CacheReferenceType,
   KeyValueDataValueType,
@@ -108,4 +110,10 @@ export interface RowData {
   column: string;
   value: RelationalDataValueType;
   file: string;
+}
+
+export interface TypedDatabaseEvents {
+  ready() : void;
+  tableReady(table:Table) : void;
+  debug(message:string) : void;
 }

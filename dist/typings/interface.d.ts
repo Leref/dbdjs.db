@@ -1,3 +1,4 @@
+import { Table } from "../keyvalue/table";
 import { CacheReferenceType, KeyValueDataValueType, RelationalDataValueType } from "./type";
 export interface KeyValueDataOption {
     value: KeyValueDataValueType;
@@ -96,4 +97,9 @@ export interface RowData {
     column: string;
     value: RelationalDataValueType;
     file: string;
+}
+export interface TypedDatabaseEvents {
+    ready(): void;
+    tableReady(table: Table): void;
+    debug(message: string): void;
 }
