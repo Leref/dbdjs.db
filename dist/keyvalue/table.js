@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Table = void 0;
 const fs_1 = require("fs");
 const promises_1 = require("fs/promises");
+const enums_1 = require("../typings/enums");
 const functions_1 = require("../utils/functions");
 const cacher_1 = require("./cacher");
 const data_1 = require("./data");
@@ -174,6 +175,7 @@ class Table {
         if (this.db.options.cacheOption.cacheReference === "DISK") {
             this._createReferencePath();
         }
+        this.db.emit(enums_1.DatabaseEvents.TABLE_READY, this);
     }
     _createNewFile() {
         const fileName = `${this.name}_scheme_${this.files.length + 1}${this.db.options.extension}`;

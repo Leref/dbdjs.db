@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { readFile, rename, rm, writeFile } from "fs/promises";
 import { type } from "os";
+import { DatabaseEvents } from "../typings/enums";
 import {
   HashData,
   KeyValueDataOption,
@@ -195,6 +196,7 @@ export class Table {
     if (this.db.options.cacheOption.cacheReference === "DISK") {
       this._createReferencePath();
     }
+    this.db.emit(DatabaseEvents.TABLE_READY,this);
   }
   _createNewFile() {
     const fileName = `${this.name}_scheme_${this.files.length + 1}${

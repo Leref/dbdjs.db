@@ -1,14 +1,16 @@
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { TypedEmitter } from "tiny-typed-emitter";
+import { DatabaseEvents } from "../typings/enums";
 import {
   KeyValueDatabaseOption,
   KeyValueDataOption,
+  TypedDatabaseEvents,
 } from "../typings/interface";
 import { CacheReferenceType } from "../typings/type";
 import { KeyValueError } from "./error";
 import { Table } from "./table";
 
-export class KeyValue extends TypedEmitter {
+export class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
   tables: Map<string, Table> = new Map<string, Table>();
   options: {
     path: string;
@@ -85,6 +87,7 @@ export class KeyValue extends TypedEmitter {
       newtable.connect();
       this.tables.set(table, newtable);
     }
+    this.emit(DatabaseEvents.READY)
   }
   async set(table: string, key: string, value: KeyValueDataOption) {
     const tableClass = this.tables.get(table);

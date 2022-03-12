@@ -1,8 +1,8 @@
 import { TypedEmitter } from "tiny-typed-emitter";
-import { KeyValueDatabaseOption, KeyValueDataOption } from "../typings/interface";
+import { KeyValueDatabaseOption, KeyValueDataOption, TypedDatabaseEvents } from "../typings/interface";
 import { CacheReferenceType } from "../typings/type";
 import { Table } from "./table";
-export declare class KeyValue extends TypedEmitter {
+export declare class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
     tables: Map<string, Table>;
     options: {
         path: string;

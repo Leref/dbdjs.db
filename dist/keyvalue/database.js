@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.KeyValue = void 0;
 const fs_1 = require("fs");
 const tiny_typed_emitter_1 = require("tiny-typed-emitter");
+const enums_1 = require("../typings/enums");
 const error_1 = require("./error");
 const table_1 = require("./table");
 class KeyValue extends tiny_typed_emitter_1.TypedEmitter {
@@ -55,6 +56,7 @@ class KeyValue extends tiny_typed_emitter_1.TypedEmitter {
             newtable.connect();
             this.tables.set(table, newtable);
         }
+        this.emit(enums_1.DatabaseEvents.READY);
     }
     async set(table, key, value) {
         const tableClass = this.tables.get(table);
