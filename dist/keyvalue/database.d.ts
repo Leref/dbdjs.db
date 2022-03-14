@@ -26,10 +26,6 @@ export declare class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
         storeOption: {
             maxDataPerFile: number;
         };
-        timeOption: {
-            saveCreatedTimestamp: boolean;
-            saveModifiedTimestamp: boolean;
-        };
     };
     constructor(options: KeyValueDatabaseOption);
     _resolve(options: KeyValueDatabaseOption): {
@@ -53,10 +49,6 @@ export declare class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
         };
         storeOption: {
             maxDataPerFile: number;
-        };
-        timeOption: {
-            saveCreatedTimestamp: boolean;
-            saveModifiedTimestamp: boolean;
         };
     };
     connect(): void;

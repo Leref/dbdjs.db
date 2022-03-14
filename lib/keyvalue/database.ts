@@ -29,10 +29,6 @@ export class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
       saveTime: number;
     };
     storeOption: { maxDataPerFile: number };
-    timeOption: {
-      saveCreatedTimestamp: boolean;
-      saveModifiedTimestamp: boolean;
-    };
   };
 
   constructor(options: KeyValueDatabaseOption) {
@@ -62,11 +58,6 @@ export class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
       storeOption: {
         maxDataPerFile: options.storeOption?.maxDataPerFile ?? 10000,
       },
-      timeOption: {
-        saveCreatedTimestamp: options.timeOption?.saveCreatedTimestamp ?? false,
-        saveModifiedTimestamp:
-          options.timeOption?.saveModifiedTimestamp ?? false,
-      },
     };
   }
   connect() {
@@ -87,7 +78,7 @@ export class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
       newtable.connect();
       this.tables.set(table, newtable);
     }
-    this.emit(DatabaseEvents.READY)
+    this.emit(DatabaseEvents.READY);
   }
   async set(table: string, key: string, value: KeyValueDataOption) {
     const tableClass = this.tables.get(table);

@@ -40,7 +40,11 @@ export class Table {
   async set(key: string, value: KeyValueSetDataOption) {
     const oldData = this.cache.get(key);
     if (oldData) {
-      const newData = new Data({ key, ...value, file: oldData.file });
+      const newData = new Data({
+        key,
+        ...value,
+        file: oldData.file,
+      });
       this.cache.set(key, newData);
       this.queue.addToQueue("set", oldData.file, key, newData);
       this.routers[newData.file] += 1;

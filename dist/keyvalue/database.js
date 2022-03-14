@@ -35,10 +35,6 @@ class KeyValue extends tiny_typed_emitter_1.TypedEmitter {
             storeOption: {
                 maxDataPerFile: options.storeOption?.maxDataPerFile ?? 10000,
             },
-            timeOption: {
-                saveCreatedTimestamp: options.timeOption?.saveCreatedTimestamp ?? false,
-                saveModifiedTimestamp: options.timeOption?.saveModifiedTimestamp ?? false,
-            },
         };
     }
     connect() {

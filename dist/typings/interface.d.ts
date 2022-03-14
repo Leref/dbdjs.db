@@ -5,22 +5,15 @@ export interface KeyValueDataOption {
     key: string;
     file: string;
     ttl: number;
-    createdTimestamp: number;
-    modifiedTimestamp: number;
 }
 export interface KeyValueSetDataOption {
     value: KeyValueDataValueType;
-    file: string;
     ttl: number;
-    createdTimestamp: number;
-    modifiedTimestamp: number;
 }
 export interface KeyValueJSONOption {
     value: KeyValueDataValueType;
     key: string;
     ttl: number;
-    createdTimestamp: number;
-    modifiedTimestamp: number;
 }
 export interface KeyValueDatabaseOption {
     path?: string;
@@ -39,10 +32,6 @@ export interface KeyValueDatabaseOption {
         getTime?: number;
         allTime?: number;
         deleteTime?: number;
-    };
-    timeOption?: {
-        saveCreatedTimestamp?: boolean;
-        saveModifiedTimestamp?: boolean;
     };
     encryptOption?: {
         enabled?: boolean;
