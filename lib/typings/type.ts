@@ -1,4 +1,11 @@
-export type KeyValueDataValueType = string | number |  null | boolean | Array<KeyValueDataValueType> | ValidJSON;
+export type KeyValueDataValueType =
+  | string
+  | number
+  | null
+  | boolean
+  | Array<KeyValueDataValueType>
+  | ValidJSON;
+
 type ValidJSON = {
   [x: string | number | symbol]:
     | ValidJSON
@@ -8,7 +15,7 @@ type ValidJSON = {
     | null
     | boolean
     | (unknown & { toJSON(): ValidJSON });
-}; 
+};
 export type CacheReferenceType = "MEMORY" | "DISK";
 
 export type RelationalDataValueType =
