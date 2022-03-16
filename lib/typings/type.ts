@@ -6,7 +6,7 @@ export type KeyValueDataValueType =
   | Array<KeyValueDataValueType>
   | ValidJSON;
 
-type ValidJSON = {
+export type ValidJSON = {
   [x: string | number | symbol]:
     | ValidJSON
     | number

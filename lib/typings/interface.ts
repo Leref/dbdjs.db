@@ -76,10 +76,6 @@ export interface RelationalDatabaseOptions {
     maxDataPerFile?: number;
     sorted?: boolean;
   };
-  timeOption?: {
-    saveCreatedTimestamp?: boolean;
-    saveModifiedTimestamp?: boolean;
-  };
 }
 export interface RelationalTableOptions {
   name: string;

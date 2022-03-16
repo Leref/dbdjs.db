@@ -1,0 +1,356 @@
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>dbdjs.db</title><meta name="description" content="Documentation for dbdjs.db"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">dbdjs.db</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>dbdjs.db</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography"><p><a href="https://discord.com/invite/HMUfMXDQsV"><img src="https://cdn.discordapp.com/attachments/817018613046312990/846181270840279050/dbdjs.png" alt="dbd.js"></a></p>
+
+<a href="#dbdjsdb" id="dbdjsdb" style="color: inherit; text-decoration: none;">
+  <h1>dbdjs.db</h1>
+</a>
+<p><a href="https://discord.com/invite/HMUfMXDQsV"><img src="https://img.shields.io/discord/773352845738115102?color=5865F2&logo=discord&logoColor=white" alt="Discord Server"></a>
+<a href="https://www.npmjs.com/package/dbdjs.db"><img src="https://img.shields.io/npm/dt/dbdjs.db.svg?maxAge=3600" alt="NPM Downloads"></a>
+<a href="https://www.npmjs.com/package/dbdjs.db"><img src="https://img.shields.io/npm/v/dbdjs.db.svg?maxAge=3600" alt="NPM Version"></a></p>
+
+<a href="#table-of-contents" id="table-of-contents" style="color: inherit; text-decoration: none;">
+  <h2>Table Of Contents</h2>
+</a>
+<ul>
+<li><a href="#about">About</a></li>
+<li><a href="#examples">Examples</a><ul>
+<li><a href="#setup">Setup</a></li>
+<li><a href="#set">Set</a></li>
+<li><a href="#get">Get</a></li>
+<li><a href="#get-all">Get All</a></li>
+<li><a href="#delete">Delete</a></li>
+</ul>
+</li>
+<li><a href="#api">API</a><ul>
+<li><a href="#database">Database</a></li>
+</ul>
+</li>
+<li><a href="#interfaces">Interfaces</a><ul>
+<li><a href="#database-options">Database Options</a></li>
+<li><a href="#table">Table</a></li>
+<li><a href="#data">Data</a></li>
+<li><a href="#all-options">All Options</a></li>
+<li><a href="#all-data">All Data</a></li>
+</ul>
+</li>
+<li><a href="#links">Links</a></li>
+</ul>
+
+<a href="#about" id="about" style="color: inherit; text-decoration: none;">
+  <h2>About</h2>
+</a>
+<p>dbdjs.db is a JSON Database meant for quick and easy saving data values.</p>
+
+<a href="#setup" id="setup" style="color: inherit; text-decoration: none;">
+  <h2>Setup</h2>
+</a>
+<pre><code class="language-js"><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">DBDJSDB</span><span class="hl-1"> = </span><span class="hl-3">require</span><span class="hl-1">(</span><span class="hl-4">&quot;dbdjs.db&quot;</span><span class="hl-1">);</span><br/><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">db</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-2">DBDJSDB</span><span class="hl-1">.</span><span class="hl-3">Database</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-5">path:</span><span class="hl-1"> </span><span class="hl-4">&quot;database&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-5">tables:</span><span class="hl-1"> [</span><span class="hl-4">&quot;test&quot;</span><span class="hl-1">],</span><br/><span class="hl-1">});</span><br/><br/><span class="hl-5">db</span><span class="hl-1">.</span><span class="hl-3">once</span><span class="hl-1">(</span><span class="hl-4">&quot;ready&quot;</span><span class="hl-1">, () </span><span class="hl-0">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-3">log</span><span class="hl-1">(</span><span class="hl-4">&quot;Database ready!&quot;</span><span class="hl-1">);</span><br/><span class="hl-1">});</span><br/><br/><span class="hl-5">db</span><span class="hl-1">.</span><span class="hl-3">connect</span><span class="hl-1">();</span>
+</code></pre>
+
+<a href="#set" id="set" style="color: inherit; text-decoration: none;">
+  <h3>Set</h3>
+</a>
+<pre><code class="language-js"><span class="hl-6">await</span><span class="hl-1"> </span><span class="hl-5">db</span><span class="hl-1">.</span><span class="hl-3">set</span><span class="hl-1">(</span><span class="hl-4">&quot;test&quot;</span><span class="hl-1">, </span><span class="hl-4">&quot;fruits&quot;</span><span class="hl-1">, {</span><br/><span class="hl-1">  </span><span class="hl-5">value:</span><span class="hl-4">&quot;apple&quot;</span><br/><span class="hl-1">});</span><br/><span class="hl-6">await</span><span class="hl-1"> </span><span class="hl-5">db</span><span class="hl-1">.</span><span class="hl-3">set</span><span class="hl-1">(</span><span class="hl-4">&quot;test&quot;</span><span class="hl-1">, </span><span class="hl-4">&quot;leref&quot;</span><span class="hl-1">, {</span><br/><span class="hl-5">value:</span><span class="hl-1"> </span><span class="hl-4">&quot;dbdjsdb owner&quot;</span><br/><span class="hl-1">});</span>
+</code></pre>
+
+<a href="#get" id="get" style="color: inherit; text-decoration: none;">
+  <h3>Get</h3>
+</a>
+<pre><code class="language-js"><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">apple</span><span class="hl-1"> = </span><span class="hl-6">await</span><span class="hl-1"> </span><span class="hl-5">db</span><span class="hl-1">.</span><span class="hl-3">get</span><span class="hl-1">(</span><span class="hl-4">&quot;test&quot;</span><span class="hl-1">, </span><span class="hl-4">&quot;fruits&quot;</span><span class="hl-1">);</span><br/><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">leref</span><span class="hl-1"> = </span><span class="hl-6">await</span><span class="hl-1"> </span><span class="hl-5">db</span><span class="hl-1">.</span><span class="hl-3">get</span><span class="hl-1">(</span><span class="hl-4">&quot;test&quot;</span><span class="hl-1">, </span><span class="hl-4">&quot;leref&quot;</span><span class="hl-1">);</span>
+</code></pre>
+
+<a href="#get-all" id="get-all" style="color: inherit; text-decoration: none;">
+  <h3>Get All</h3>
+</a>
+<pre><code class="language-js"><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">lerefAndApple</span><span class="hl-1"> = </span><span class="hl-6">await</span><span class="hl-1"> </span><span class="hl-5">db</span><span class="hl-1">.</span><span class="hl-3">all</span><span class="hl-1">(</span><span class="hl-4">&quot;test&quot;</span><span class="hl-1">,</span><span class="hl-0">undefined</span><span class="hl-1">,</span><span class="hl-7">2</span><span class="hl-1">);</span>
+</code></pre>
+
+<a href="#delete" id="delete" style="color: inherit; text-decoration: none;">
+  <h3>Delete</h3>
+</a>
+<pre><code class="language-js"><span class="hl-6">await</span><span class="hl-1"> </span><span class="hl-5">db</span><span class="hl-1">.</span><span class="hl-3">delete</span><span class="hl-1">(</span><span class="hl-4">&quot;test&quot;</span><span class="hl-1">, </span><span class="hl-4">&quot;fruits&quot;</span><span class="hl-1">);</span><br/><span class="hl-6">await</span><span class="hl-1"> </span><span class="hl-5">db</span><span class="hl-1">.</span><span class="hl-3">delete</span><span class="hl-1">(</span><span class="hl-4">&quot;test&quot;</span><span class="hl-1">, </span><span class="hl-4">&quot;leref&quot;</span><span class="hl-1">);</span>
+</code></pre>
+
+<a href="#api" id="api" style="color: inherit; text-decoration: none;">
+  <h2>API</h2>
+</a>
+
+<a href="#database" id="database" style="color: inherit; text-decoration: none;">
+  <h3>#Database</h3>
+</a>
+<table>
+<thead>
+<tr>
+<th align="left">Params</th>
+<th align="right">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">options: <a href="#database-options">DatabaseOptions</a></td>
+<td align="right">The database constructor to make a new database instance.</td>
+</tr>
+</tbody></table>
+<ul>
+<li>#set()<table>
+<thead>
+<tr>
+<th align="left">Params</th>
+<th align="center">Return</th>
+<th align="right">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">table: string, key: string, value: {value:any,ttl?:number}</td>
+<td align="center">Promise&lt;boolean&gt;</td>
+<td align="right">Set method for the database.</td>
+</tr>
+</tbody></table>
+</li>
+<li>#get()<table>
+<thead>
+<tr>
+<th align="left">Params</th>
+<th align="center">Return</th>
+<th align="right">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">table: string, key: string</td>
+<td align="center">Promise&lt;<a href="#data">Data</a>&gt;</td>
+<td align="right">Get method for the database.</td>
+</tr>
+</tbody></table>
+</li>
+<li>#all()<table>
+<thead>
+<tr>
+<th align="left">Params</th>
+<th align="center">Return</th>
+<th align="right">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">table: string, filterFunc?: function,limit?:number</td>
+<td align="center">Promise&lt;<a href="#all-data">AllData</a>[]&gt;</td>
+<td align="right">GetAll method for the database.</td>
+</tr>
+</tbody></table>
+</li>
+<li>#delete()<table>
+<thead>
+<tr>
+<th align="left">Params</th>
+<th align="center">Return</th>
+<th align="right">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">table: string, key: string</td>
+<td align="center">Promise&lt;boolean&gt;</td>
+<td align="right">Delete method for the database.</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+
+<a href="#interfaces" id="interfaces" style="color: inherit; text-decoration: none;">
+  <h2>Interfaces</h2>
+</a>
+
+<a href="#database-options" id="database-options" style="color: inherit; text-decoration: none;">
+  <h3>Database Options</h3>
+</a>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="center">Value</th>
+<th align="center">Default</th>
+<th align="right">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">tables</td>
+<td align="center"><a href="#tables">Table</a>[]</td>
+<td align="center"></td>
+<td align="right">The reserved tables for the database.</td>
+</tr>
+<tr>
+<td align="left">path?</td>
+<td align="center">string</td>
+<td align="center">&quot;database&quot;</td>
+<td align="right">Path to main database folder.</td>
+</tr>
+<tr>
+<td align="left">maxFileData?</td>
+<td align="center">number</td>
+<td align="center">50000</td>
+<td align="right">The max data that a file can store.</td>
+</tr>
+<tr>
+<td align="left">debug?</td>
+<td align="center">boolean</td>
+<td align="center">false</td>
+<td align="right">Whether the database should send debug log events.</td>
+</tr>
+<tr>
+<td align="left">extension?</td>
+<td align="center">string</td>
+<td align="center">&quot;.sql&quot;</td>
+<td align="right">The extension for each file in the database.</td>
+</tr>
+<tr>
+<td align="left">force?</td>
+<td align="center">boolean</td>
+<td align="center">false</td>
+<td align="right">Whether to force the database to save or delete data on the file.</td>
+</tr>
+<tr>
+<td align="left">cache?</td>
+<td align="center">number</td>
+<td align="center">3000</td>
+<td align="right">How many data can the database store in memory cache.</td>
+</tr>
+<tr>
+<td align="left">timestamp?</td>
+<td align="center">boolean</td>
+<td align="center">false</td>
+<td align="right">Whether the database should save timestamp for each data.</td>
+</tr>
+<tr>
+<td align="left">saveTime?</td>
+<td align="center">number</td>
+<td align="center">100</td>
+<td align="right">How long until the database can save the data into file (ms).</td>
+</tr>
+<tr>
+<td align="left">getTime?</td>
+<td align="center">number</td>
+<td align="center">1</td>
+<td align="right">How long until the database pull a data from file (ms).</td>
+</tr>
+<tr>
+<td align="left">allTime?</td>
+<td align="center">number</td>
+<td align="center">100</td>
+<td align="right">How long until the database pull some data from file (ms).</td>
+</tr>
+<tr>
+<td align="left">deleteTime?</td>
+<td align="center">number</td>
+<td align="center">100</td>
+<td align="right">How long until the database delete a data from file (ms).</td>
+</tr>
+<tr>
+<td align="left">cacheRouters?</td>
+<td align="center">boolean</td>
+<td align="center">true</td>
+<td align="right">Whether the database should cache data routers on startup.</td>
+</tr>
+</tbody></table>
+
+<a href="#table" id="table" style="color: inherit; text-decoration: none;">
+  <h3>Table</h3>
+</a>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="center">Value</th>
+<th align="right">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">name</td>
+<td align="center">string</td>
+<td align="right">Name for the table, this will also define the path to this table file.</td>
+</tr>
+</tbody></table>
+
+<a href="#data" id="data" style="color: inherit; text-decoration: none;">
+  <h3>Data</h3>
+</a>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="center">Value</th>
+<th align="right">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">key</td>
+<td align="center">string</td>
+<td align="right">The key of the data.</td>
+</tr>
+<tr>
+<td align="left">value</td>
+<td align="center">any</td>
+<td align="right">The value of the data.</td>
+</tr>
+<tr>
+<td align="left">ttl?</td>
+<td align="center">number</td>
+<td align="right">The ttl for the data.</td>
+</tr>
+<tr>
+<td align="left">createdAt?</td>
+<td align="center">number</td>
+<td align="right">The time which this data was created.</td>
+</tr>
+<tr>
+<td align="left">updatedAt?</td>
+<td align="center">number</td>
+<td align="right">The time which this data was last updated.</td>
+</tr>
+</tbody></table>
+
+<a href="#all-options" id="all-options" style="color: inherit; text-decoration: none;">
+  <h3>All Options</h3>
+</a>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="center">Value</th>
+<th align="right">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">filter</td>
+<td align="center">(allData: <a href="#all-data">AllData</a>) =&gt; boolean</td>
+<td align="right">The function to filters data.</td>
+</tr>
+</tbody></table>
+
+<a href="#all-data" id="all-data" style="color: inherit; text-decoration: none;">
+  <h3>All Data</h3>
+</a>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="center">Value</th>
+<th align="right">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">key</td>
+<td align="center">string</td>
+<td align="right">The key of the data.</td>
+</tr>
+<tr>
+<td align="left">data</td>
+<td align="center"><a href="#data">Data</a></td>
+<td align="right">The data object of the data.</td>
+</tr>
+</tbody></table>
+
+<a href="#links" id="links" style="color: inherit; text-decoration: none;">
+  <h2>Links</h2>
+</a>
+<p>dbdjs.db was created for <a href="https://www.npmjs.com/package/dbd.js">dbd.js</a> now available for anyone to learn and use.</p>
+<ul>
+<li><a href="https://dbd.js.org">Website</a></li>
+<li><a href="https://discord.com/invite/HMUfMXDQsV">Discord Server</a></li>
+</ul>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-enum"><a href="enums/DatabaseEvents.html" class="tsd-kind-icon">Database<wbr/>Events</a></li><li class="tsd-kind-class"><a href="classes/Cacher.html" class="tsd-kind-icon">Cacher</a></li><li class="tsd-kind-class"><a href="classes/Data.html" class="tsd-kind-icon">Data</a></li><li class="tsd-kind-class"><a href="classes/KeyValue.html" class="tsd-kind-icon">Key<wbr/>Value</a></li><li class="tsd-kind-class"><a href="classes/KeyValueError.html" class="tsd-kind-icon">Key<wbr/>Value<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/Queue.html" class="tsd-kind-icon">Queue</a></li><li class="tsd-kind-class"><a href="classes/Table.html" class="tsd-kind-icon">Table</a></li><li class="tsd-kind-interface"><a href="interfaces/ColumnData.html" class="tsd-kind-icon">Column<wbr/>Data</a></li><li class="tsd-kind-interface"><a href="interfaces/HashData.html" class="tsd-kind-icon">Hash<wbr/>Data</a></li><li class="tsd-kind-interface"><a href="interfaces/KeyValueDataOption.html" class="tsd-kind-icon">Key<wbr/>Value<wbr/>Data<wbr/>Option</a></li><li class="tsd-kind-interface"><a href="interfaces/KeyValueDatabaseOption.html" class="tsd-kind-icon">Key<wbr/>Value<wbr/>Database<wbr/>Option</a></li><li class="tsd-kind-interface"><a href="interfaces/KeyValueJSONOption.html" class="tsd-kind-icon">Key<wbr/>ValueJSONOption</a></li><li class="tsd-kind-interface"><a href="interfaces/KeyValueSetDataOption.html" class="tsd-kind-icon">Key<wbr/>Value<wbr/>Set<wbr/>Data<wbr/>Option</a></li><li class="tsd-kind-interface"><a href="interfaces/RelationalDatabaseOptions.html" class="tsd-kind-icon">Relational<wbr/>Database<wbr/>Options</a></li><li class="tsd-kind-interface"><a href="interfaces/RelationalTableOptions.html" class="tsd-kind-icon">Relational<wbr/>Table<wbr/>Options</a></li><li class="tsd-kind-interface"><a href="interfaces/RowData.html" class="tsd-kind-icon">Row<wbr/>Data</a></li><li class="tsd-kind-interface"><a href="interfaces/TypedDatabaseEvents.html" class="tsd-kind-icon">Typed<wbr/>Database<wbr/>Events</a></li><li class="tsd-kind-type-alias"><a href="modules.html#BigBuffer" class="tsd-kind-icon">Big<wbr/>Buffer</a></li><li class="tsd-kind-type-alias"><a href="modules.html#CacheReferenceType" class="tsd-kind-icon">Cache<wbr/>Reference<wbr/>Type</a></li><li class="tsd-kind-type-alias"><a href="modules.html#KeyValueDataValueType" class="tsd-kind-icon">Key<wbr/>Value<wbr/>Data<wbr/>Value<wbr/>Type</a></li><li class="tsd-kind-type-alias"><a href="modules.html#RelationalDataValueType" class="tsd-kind-icon">Relational<wbr/>Data<wbr/>Value<wbr/>Type</a></li><li class="tsd-kind-type-alias"><a href="modules.html#ValidJSON" class="tsd-kind-icon">ValidJSON</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
