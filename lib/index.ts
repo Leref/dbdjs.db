@@ -8,3 +8,4 @@ export * from "./keyvalue/data";
 export * from "./keyvalue/error";
 export * from "./keyvalue/queueManager";
 export * from "./keyvalue/table";
+export * from "./utils/functions"
