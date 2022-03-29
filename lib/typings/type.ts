@@ -1,5 +1,6 @@
 export type KeyValueDataValueType =
   | string
+  | bigint
   | number
   | null
   | boolean
@@ -17,14 +18,11 @@ export type ValidJSON = {
     | (unknown & { toJSON(): ValidJSON });
 };
 export type CacheReferenceType = "MEMORY" | "DISK";
-
+export type integer = number;
 export type RelationalDataValueType =
   | string
+  | integer
   | number
   | object
-  | null
-  | boolean
-  | BigInt
   | BigBuffer;
-
 export type BigBuffer = Buffer | ArrayBuffer | string | object | BigInt;

@@ -5,6 +5,7 @@ export declare class Data {
     ttl: number;
     file: string;
     key: string;
+    type: string;
     constructor(data: KeyValueDataOption);
     toJSON(): KeyValueJSONOption;
 }

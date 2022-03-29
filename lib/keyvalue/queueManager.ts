@@ -1,4 +1,5 @@
 import { KeyValueJSONOption } from "../typings/interface";
+import { Cacher } from "./cacher";
 import { Data } from "./data";
 
 export class Queue {
@@ -6,19 +7,25 @@ export class Queue {
     set: Map<string, Map<string, Data>>;
     get: Map<string, Record<string, Data | KeyValueJSONOption>>;
     delete: Map<string, Set<string>>;
+    all: Cacher;
     tempref?: Record<string, string>;
   };
-  queued: { set: boolean; get: boolean; delete: boolean };
+  queued: { set: boolean; get: boolean; delete: boolean; all: boolean };
   constructor() {
     this.queue = {
       set: new Map<string, Map<string, Data>>(),
       get: new Map<string, Record<string, Data | KeyValueJSONOption>>(),
       delete: new Map<string, Set<string>>(),
+      all: new Cacher({
+        limit: Infinity,
+        sorted: true,
+      }),
     };
     this.queued = {
       set: false,
       get: false,
       delete: false,
+      all: false,
     };
   }
   addToQueue(

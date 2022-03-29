@@ -1,17 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Queue = void 0;
+const cacher_1 = require("./cacher");
 class Queue {
     constructor() {
         this.queue = {
             set: new Map(),
             get: new Map(),
             delete: new Map(),
+            all: new cacher_1.Cacher({
+                limit: Infinity,
+                sorted: true,
+            }),
         };
         this.queued = {
             set: false,
             get: false,
             delete: false,
+            all: false,
         };
     }
     addToQueue(method, path, key, value) {

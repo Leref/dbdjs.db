@@ -27,6 +27,8 @@ export declare class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
             maxDataPerFile: number;
         };
     };
+    ready: boolean;
+    readyTimestamp: number;
     constructor(options: KeyValueDatabaseOption);
     _resolve(options: KeyValueDatabaseOption): {
         path: string;
@@ -53,4 +55,11 @@ export declare class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
     };
     connect(): void;
     set(table: string, key: string, value: KeyValueDataOption): Promise<void>;
+    get(table: string, key: string): Promise<import("./data").Data | undefined>;
+    delete(table: string, key: string): Promise<void>;
+    clear(table: string): Promise<void>;
+    all(table: string, filter?: (key?: string) => boolean, limit?: number, sortType?: "asc" | "desc"): Promise<import("./data").Data[]>;
+    get ping(): number;
+    tablePing(table: string): number;
+    _debug(header: string, msg: string): void;
 }

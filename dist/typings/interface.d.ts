@@ -5,6 +5,7 @@ export interface KeyValueDataOption {
     key: string;
     file: string;
     ttl: number;
+    type?: string;
 }
 export interface KeyValueSetDataOption {
     value: KeyValueDataValueType;
@@ -14,6 +15,7 @@ export interface KeyValueJSONOption {
     value: KeyValueDataValueType;
     key: string;
     ttl: number;
+    type: string;
 }
 export interface KeyValueDatabaseOption {
     path?: string;
@@ -65,10 +67,6 @@ export interface RelationalDatabaseOptions {
         maxDataPerFile?: number;
         sorted?: boolean;
     };
-    timeOption?: {
-        saveCreatedTimestamp?: boolean;
-        saveModifiedTimestamp?: boolean;
-    };
 }
 export interface RelationalTableOptions {
     name: string;
@@ -91,4 +89,34 @@ export interface TypedDatabaseEvents {
     ready(): void;
     tableReady(table: Table): void;
     debug(message: string): void;
+}
+export interface ColumnDatabaseOptions {
+    tables: ColumnTableOptions;
+    path?: string;
+    extension?: string;
+    cacheOption?: {
+        cacheReference?: CacheReferenceType;
+        sorted?: boolean;
+        limit?: number;
+    };
+    methodOption?: {
+        saveTime?: number;
+        getTime?: number;
+        allTime?: number;
+        deleteTime?: number;
+    };
+    storeOption?: {
+        maxDataPerFile?: number;
+        sorted?: boolean;
+    };
+}
+export interface ColumnTableOptions {
+    name: string;
+    columns: ColumnDbColumnData[];
+}
+export interface ColumnDbColumnData {
+    name: string;
+    primary: boolean;
+    values: Map<string, RelationalDataValueType>;
+    type: RelationalDataValueType;
 }

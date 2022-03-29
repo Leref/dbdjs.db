@@ -10,6 +10,8 @@ class KeyValue extends tiny_typed_emitter_1.TypedEmitter {
     constructor(options) {
         super();
         this.tables = new Map();
+        this.ready = false;
+        this.readyTimestamp = -1;
         this.options = this._resolve(options);
     }
     _resolve(options) {
@@ -27,7 +29,7 @@ class KeyValue extends tiny_typed_emitter_1.TypedEmitter {
                 securitykey: options.encryptOption?.securitykey ?? "",
             },
             methodOption: {
-                allTime: options.methodOption?.allTime ?? 1000,
+                allTime: options.methodOption?.allTime ?? 10000,
                 deleteTime: options.methodOption?.deleteTime ?? 100,
                 getTime: options.methodOption?.getTime ?? 1000,
                 saveTime: options.methodOption?.saveTime ?? 100,
@@ -46,12 +48,15 @@ class KeyValue extends tiny_typed_emitter_1.TypedEmitter {
         for (const table of this.options.tables) {
             if (!(0, fs_1.existsSync)(`${this.options.path}/${table}`)) {
                 (0, fs_1.mkdirSync)(`${this.options.path}/${table}`);
-                (0, fs_1.writeFileSync)(`${this.options.path}/${table}/${table}_scheme_1.sql`, "{}");
+                (0, fs_1.writeFileSync)(`${this.options.path}/${table}/${table}_scheme_1${this.options.extension}`, "{}");
+                this._debug("CREATE_TABLE", `Created table ${table}`);
             }
             const newtable = new table_1.Table(table, `${this.options.path}/${table}`, this);
             newtable.connect();
             this.tables.set(table, newtable);
         }
+        this.ready = true;
+        this.readyTimestamp = Date.now();
         this.emit(enums_1.DatabaseEvents.READY);
     }
     async set(table, key, value) {
@@ -60,6 +65,51 @@ class KeyValue extends tiny_typed_emitter_1.TypedEmitter {
             throw new error_1.KeyValueError(`[InvalidTable] :  Table ${table} not found!`);
         }
         return await tableClass.set(key, value);
+    }
+    async get(table, key) {
+        const tableClass = this.tables.get(table);
+        if (!tableClass) {
+            throw new error_1.KeyValueError(`[InvalidTable] :  Table ${table} not found!`);
+        }
+        return await tableClass.get(key);
+    }
+    async delete(table, key) {
+        const tableClass = this.tables.get(table);
+        if (!tableClass) {
+            throw new error_1.KeyValueError(`[InvalidTable] :  Table ${table} not found!`);
+        }
+        return await tableClass.delete(key);
+    }
+    async clear(table) {
+        const tableClass = this.tables.get(table);
+        if (!tableClass) {
+            throw new error_1.KeyValueError(`[InvalidTable] :  Table ${table} not found!`);
+        }
+        return tableClass.clear();
+    }
+    async all(table, filter, limit = 10, sortType = "desc") {
+        const tableClass = this.tables.get(table);
+        if (!tableClass) {
+            throw new error_1.KeyValueError(`[InvalidTable] :  Table ${table} not found!`);
+        }
+        return await tableClass.all(filter, limit, sortType);
+    }
+    get ping() {
+        const res = [];
+        this.tables.forEach((table) => {
+            res.push(table.ping);
+        });
+        return res.reduce((a, b) => a + b) / this.tables.size;
+    }
+    tablePing(table) {
+        const tableClass = this.tables.get(table);
+        if (!tableClass) {
+            throw new error_1.KeyValueError(`[InvalidTable] :  Table ${table} not found!`);
+        }
+        return tableClass.ping;
+    }
+    _debug(header, msg) {
+        this.emit("debug", `[KeyValue](${header}) => ${msg}`);
     }
 }
 exports.KeyValue = KeyValue;

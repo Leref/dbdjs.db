@@ -23,6 +23,8 @@ export class Table {
   references: Map<string, string> | string;
   cache: Cacher;
   routers: Record<string, number> = {};
+  ready: boolean = false;
+  readyTimestamp: number = -1;
   constructor(name: string, path: string, db: KeyValue) {
     this.name = name;
     this.path = path;
@@ -95,10 +97,11 @@ export class Table {
     }
     if (!this.queue.queued.set) {
       this.queue.queued.set = true;
-      setTimeout(async () => {
+      const timeout = setTimeout(async () => {
         await this._update();
         delete this.queue.queue.tempref;
         this.queue.queued.set = false;
+        clearTimeout(timeout);
       }, this.db.options.methodOption.saveTime);
     }
   }
@@ -139,9 +142,11 @@ export class Table {
   }
   connect() {
     const encryptOption = this.db.options.encryptOption;
+    const start = performance.now();
     const files = this.files;
     if (!files.length) {
       this._createNewFile();
+      this.db._debug("ADDTABLEFILE", `created Table ${this.name} file`);
     }
     for (const file of files) {
       if (file.startsWith("$temp_")) {
@@ -170,7 +175,13 @@ export class Table {
         const keys = Object.keys(JSONData);
         this.routers[file] = keys.length;
         for (const key of keys) {
-          this.cache.set(key, new Data({ ...JSONData[key], file }));
+          if (JSONData[key].ttl) {
+            const timeout = setTimeout(() => {
+              this.delete(key);
+              clearTimeout(timeout);
+            }, JSONData[key].ttl).unref();
+          }
+          this.cache.manualSet(key, new Data({ ...JSONData[key], file }));
           this.setReference(key, file);
         }
       } else {
@@ -192,15 +203,25 @@ export class Table {
         const keys = Object.keys(JSONData);
         this.routers[file] = keys.length;
         for (const key of keys) {
-          this.cache.set(key, new Data({ ...JSONData[key], file }));
+          this.cache.manualSet(key, new Data({ ...JSONData[key], file }));
           this.setReference(key, file);
         }
       }
     }
+    this.cache.sort();
     if (this.db.options.cacheOption.cacheReference === "DISK") {
       this._createReferencePath();
     }
-    this.db.emit(DatabaseEvents.TABLE_READY,this);
+    this.db.emit(DatabaseEvents.TABLE_READY, this);
+    this.ready = true;
+    this.readyTimestamp = Date.now();
+    this.db._debug(
+      "TABLE_READY",
+      `
+      |----------------|------------------------|
+      | connectionTime | ${(performance.now() - start).toFixed(5)}ms |
+      | readyTimestamp | ${this.readyTimestamp} |`,
+    );
   }
   _createNewFile() {
     const fileName = `${this.name}_scheme_${this.files.length + 1}${
@@ -260,13 +281,15 @@ export class Table {
     }
     if (!this.queue.queued.get) {
       this.queue.queued.get = true;
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         this.queue.queue.get.clear();
         this.queue.queued.get = false;
-      }, this.db.options.methodOption.getTime);
-      setTimeout(() => {
+        clearTimeout(timeout);
+      }, this.db.options.methodOption.getTime).unref();
+      const refTimeout = setTimeout(() => {
         delete this.queue.queue.tempref;
-      }, 5000);
+        clearTimeout(refTimeout);
+      }, 5000).unref();
     }
     return data;
   }
@@ -286,81 +309,77 @@ export class Table {
       return this.queue.queue.get.get(file)?.[key];
     }
   }
-  async all(filter?: (key: string, file: string) => boolean, limit = 10) {
-    let res: Record<string, Data> = {};
+  async all(
+    filter?: (key?: string) => boolean,
+    limit = 10,
+    sortType: "asc" | "desc" = "desc",
+  ) {
+    limit =
+      limit === Infinity
+        ? Object.values(this.routers).reduce((a, b) => a + b)
+        : limit;
+    let res = [];
     const encryptOption = this.db.options.encryptOption;
-    if (!filter) {
-      const files = this.files;
-      for (const file of files) {
-        if (limit <= 0) break;
-        let readData = (await readFile(`${this.path}/${file}`)).toString();
-        if (encryptOption.enabled) {
-          const HashData = JSONParser<HashData>(readData);
-          if (!HashData.iv) continue;
-          readData = decrypt(HashData, encryptOption.securitykey);
-        }
-        const JSONData =
-          JSONParser<Record<string, KeyValueJSONOption>>(readData);
-        const keys = Object.keys(JSONData);
-        if (limit < keys.length) {
-          let i = 0;
-          while (i < limit) {
-            res[keys[i]] = new Data({ file, ...JSONData[keys[i]] });
-            i++;
-          }
-          limit = 0;
-          continue;
-        } else {
-          let i = 0;
-          while (i < keys.length) {
-            res[keys[i]] = new Data({ file, ...JSONData[keys[i]] });
-            i++;
-          }
-          limit -= keys.length;
-          continue;
-        }
-      }
-      return res;
-    } else {
-      let files: Array<string> = [];
-      if (this.references instanceof Map) {
-        for (const [key, file] of this.references) {
-          if (filter(key, file) && files.indexOf(file) === -1) files.push(file);
-        }
+    if (this.queue.queued.all) {
+      if (!filter) {
+        res = [...this.queue.queue.all.data.values()];
+        res =
+          sortType === "desc"
+            ? res.slice(0, limit)
+            : res.reverse().slice(0, limit);
+        return res;
       } else {
-        let ref = this.queue.queue.tempref;
-        if (!ref) ref = this._getReferenceDataFromFile();
-        if (!ref) {
-          files = this.files;
-          ref = {};
-        }
-        for (const key of Array.isArray(ref) ? ref : Object.keys(ref)) {
-          if (filter(key, ref[key]) && files.indexOf(ref[key]) === -1)
-            files.push(ref[key]);
-        }
+        res = this.queue.queue.all.filter((_, key) => filter(key));
+        res =
+          sortType === "desc"
+            ? res.slice(0, limit)
+            : res.reverse().slice(0, limit);
+        return res;
       }
-      for (const file of files) {
-        if (limit <= 0) break;
-        let readData = (await readFile(`${this.path}/${file}`)).toString();
+    } else {
+      this.queue.queued.all = true;
+      this.files.forEach((file) => {
+        const readData = readFileSync(`${this.path}/${file}`).toString();
+        let JSONData;
         if (encryptOption.enabled) {
           const HashData = JSONParser<HashData>(readData);
-          if (!HashData.iv) continue;
-          readData = decrypt(HashData, encryptOption.securitykey);
-        }
-        const JSONData =
-          JSONParser<Record<string, KeyValueJSONOption>>(readData);
-        const keys = Object.keys(JSONData);
-        let i = 0;
-        while (i < keys.length) {
-          if (limit <= 0) break;
-          if (filter(keys[i], file)) {
-            res[keys[i]] = new Data({ file, ...JSONData[keys[i]] });
-            limit -= 1;
+          if (!HashData.iv) {
+            JSONData = {};
+          } else {
+            JSONData = JSONParser<Record<string, KeyValueJSONOption>>(
+              decrypt(HashData, encryptOption.securitykey),
+            );
           }
-          i++;
+        } else {
+          JSONData = JSONParser<Record<string, KeyValueJSONOption>>(readData);
         }
+        const keys = Object.keys(JSONData);
+        for (const key of keys) {
+          const data = new Data({ ...JSONData[key], file });
+          this.queue.queue.all.manualSet(key, data);
+        }
+      });
+      this.queue.queue.all.sort();
+      const timeout = setTimeout(() => {
+        this.queue.queue.all.clear();
+        this.queue.queued.all = false;
+        clearTimeout(timeout);
+      }, this.db.options.methodOption.allTime).unref();
+      if (!filter) {
+        res = [...this.queue.queue.all.data.values()];
+        res =
+          sortType === "desc"
+            ? res.slice(0, limit)
+            : res.reverse().slice(0, limit);
+        return res;
+      } else {
+        res = this.queue.queue.all.filter((_, key) => filter(key));
+        res =
+          sortType === "desc"
+            ? res.slice(0, limit)
+            : res.reverse().slice(0, limit);
+        return res;
       }
-      return res;
     }
   }
   async delete(key: string) {
@@ -380,10 +399,11 @@ export class Table {
     this.queue.addToQueue("delete", file, key);
     if (!this.queue.queued.delete) {
       this.queue.queued.delete = true;
-      setTimeout(async () => {
+      const timeout = setTimeout(async () => {
         await this._deleteUpdate();
         this.queue.queued.delete = false;
-      }, this.db.options.methodOption.deleteTime);
+        clearTimeout(timeout);
+      }, this.db.options.methodOption.deleteTime).unref();
     }
   }
   async _deleteUpdate() {
@@ -439,5 +459,12 @@ export class Table {
     rmSync(this.path, {
       recursive: true,
     });
+  }
+  get ping() {
+    const randomFile =
+      this.files[Math.floor(Math.random() * this.files.length)];
+    const start = performance.now();
+    readFileSync(`${this.path}/${randomFile}`);
+    return performance.now() - start;
   }
 }

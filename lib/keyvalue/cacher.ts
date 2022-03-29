@@ -21,6 +21,10 @@ export class Cacher {
       return this;
     }
   }
+  manualSet(key: string, value: Data) {
+      if((this.options?.limit ?? 10000) === this.data.size) return;
+      this.data.set(key, value);
+    }
   get(key: string) {
     return this.data.get(key);
   }
@@ -30,12 +34,12 @@ export class Cacher {
   clear() {
     return this.data.clear();
   }
-  find(func: (val: Data, k: string, cacher: this) => boolean) {
+  find(func: (val: Data, k?: string, cacher?: this) => boolean) {
     for (const [key, value] of this.data) {
       if (func(value, key, this)) return value;
     }
   }
-  filter(func: (val: Data, k: string, cacher: this) => boolean) {
+  filter(func: (val: Data, k?: string, cacher?: this) => boolean) {
     const res = [];
     for (const [key, value] of this.data) {
       if (func(value, key, this)) {
@@ -78,7 +82,7 @@ export class Cacher {
     });
 
     let i = 0;
-    while (i < (this.options?.limit ?? 10000)) {
+    while (i < (this.options?.limit ?? 10000) && i < entries.length) {
       this.data.set(entries[i][0], entries[i][1]);
       i++;
     }

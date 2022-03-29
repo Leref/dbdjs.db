@@ -17,6 +17,11 @@ class Cacher {
             return this;
         }
     }
+    manualSet(key, value) {
+        if ((this.options?.limit ?? 10000) === this.data.size)
+            return;
+        this.data.set(key, value);
+    }
     get(key) {
         return this.data.get(key);
     }
@@ -79,7 +84,7 @@ class Cacher {
                 return -1;
         });
         let i = 0;
-        while (i < (this.options?.limit ?? 10000)) {
+        while (i < (this.options?.limit ?? 10000) && i < entries.length) {
             this.data.set(entries[i][0], entries[i][1]);
             i++;
         }

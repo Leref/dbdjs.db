@@ -12,6 +12,8 @@ export declare class Table {
     references: Map<string, string> | string;
     cache: Cacher;
     routers: Record<string, number>;
+    ready: boolean;
+    readyTimestamp: number;
     constructor(name: string, path: string, db: KeyValue);
     _getFiles(): string[];
     set(key: string, value: KeyValueSetDataOption): Promise<void>;
@@ -24,9 +26,10 @@ export declare class Table {
     _createReferencePath(): void;
     get(key: string): Promise<Data | undefined>;
     _get(key: string, file: string): Promise<KeyValueJSONOption | undefined>;
-    all(filter?: (key: string, file: string) => boolean, limit?: number): Promise<Record<string, Data>>;
+    all(filter?: (key?: string) => boolean, limit?: number, sortType?: "asc" | "desc"): Promise<Data[]>;
     delete(key: string): Promise<void>;
     _deleteUpdate(): Promise<void>;
     deleteReference(key: string): void;
     clear(): void;
+    get ping(): number;
 }
