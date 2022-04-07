@@ -61,6 +61,8 @@ async function run() {
   await db.all("main").then(console.table);
   console.log(`avg Ping: ${db.ping} ms`);
   console.log(`table main ping is: ${db.tablePing("main")} ms`);
+
+  await db.clear("main");
 }
 
 await run().then((_) => console.log("executed esm test for KeyValue"));

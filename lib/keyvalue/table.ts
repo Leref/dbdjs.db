@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, rmSync, writeFileSync } from "fs";
+import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { readFile, rename, rm, writeFile } from "fs/promises";
 import { type } from "os";
 import { DatabaseEvents } from "../typings/enums.js";
@@ -269,7 +269,9 @@ export class Table {
   }
   async get(key: string) {
     let data: Data | undefined = this.cache.get(key);
-    if (!data) {
+    if (data) {
+      return data;
+    } else {
       if (this.references instanceof Map) {
         const file = this.references.get(key);
         if (!file) return;
@@ -284,8 +286,16 @@ export class Table {
         const tempdata = await this._get(key, file);
         if (!tempdata) return;
         data = new Data({ ...tempdata, file });
+        const refTimeout = setTimeout(() => {
+          delete this.queue.queue.tempref;
+          clearTimeout(refTimeout);
+        }, 5000);
       }
     }
+    return data;
+  }
+  async _get(key: string, file: string) {
+    const encryptOption = this.db.options.encryptOption;
     if (!this.queue.queued.get) {
       this.queue.queued.get = true;
       const timeout = setTimeout(() => {
@@ -293,15 +303,7 @@ export class Table {
         this.queue.queued.get = false;
         clearTimeout(timeout);
       }, this.db.options.methodOption.getTime);
-      const refTimeout = setTimeout(() => {
-        delete this.queue.queue.tempref;
-        clearTimeout(refTimeout);
-      }, 5000);
     }
-    return data;
-  }
-  async _get(key: string, file: string) {
-    const encryptOption = this.db.options.encryptOption;
     if (!this.queue.queue.get.get(file)) {
       let readData = readFileSync(`${this.path}/${file}`).toString();
       if (encryptOption.enabled) {
@@ -346,7 +348,10 @@ export class Table {
     } else {
       this.queue.queued.all = true;
       const referenceSize = await this.getReferenceSize();
-      if(referenceSize <= this.db.options.cacheOption.limit && referenceSize <= this.db.options.storeOption.maxDataPerFile) {
+      if (
+        referenceSize <= this.db.options.cacheOption.limit &&
+        referenceSize <= this.db.options.storeOption.maxDataPerFile
+      ) {
         return [...this.cache.data.values()];
       }
       this.files.forEach((file) => {
@@ -440,6 +445,11 @@ export class Table {
         await rm(`${this.path}/${file}`, {
           recursive: true,
         });
+        const indexof = this.files.indexOf(file);
+        this.files.splice(indexof, 1);
+        if(this.files.length === 0) {
+          this._createNewFile();
+        }
       } else {
         let writeData = JSON.stringify(JSONData);
         if (encryptOption.enabled) {
@@ -468,9 +478,16 @@ export class Table {
   }
   clear() {
     this.cache.clear();
+    this.queue.queue.tempref = {};
     rmSync(this.path, {
       recursive: true,
     });
+    this.files = [];
+    mkdirSync(this.path, {
+      recursive: true,
+    })
+    this._createNewFile();
+    this._createReferencePath();
   }
   getPing() {
     if (this.#ping !== -1 && Date.now() - this.#lastPingTimestamp < 20000)
@@ -535,10 +552,13 @@ export class Table {
     }
   }
   async getReferenceSize() {
-    if(typeof this.references === "string") {
-      return Object.keys(JSONParser<Record<string, KeyValueJSONOption>>((await readFile(this.references)).toString())).length;
-    }
-    else {
+    if (typeof this.references === "string") {
+      return Object.keys(
+        JSONParser<Record<string, KeyValueJSONOption>>(
+          (await readFile(this.references)).toString(),
+        ),
+      ).length;
+    } else {
       return this.references.size;
     }
   }

@@ -12,7 +12,9 @@
   "scripts": {
     "test": "node tests/KeyValue/KeyValuecjs.js && node tests/KeyValue/KeyValuemjs.mjs && node tests/readdata.js",
     "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && npm run createpack",
-    "createpack": "node tests/pack.js"
+    "createpack": "node tests/pack.js",
+    "exec": "node --expose-gc executions/exec.js"
+
   },
   "engines": {
     "node": ">=16.x"

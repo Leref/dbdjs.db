@@ -105,7 +105,7 @@ export class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
     }
     return await tableClass.delete(key);
   }
-  async clear(table: string) {
+  clear(table: string) {
     const tableClass = this.tables.get(table);
     if (!tableClass) {
       throw new KeyValueError(`[InvalidTable] :  Table ${table} not found!`);

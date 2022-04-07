@@ -1,4 +1,5 @@
 const { KeyValue } = require("../../dist/cjs/index.js");
+const { newDB } = require( "../../index.js" );
 const db = new KeyValue({
   path: "./database/", //path of the database
   tables: ["main"], // TableName[]
@@ -69,6 +70,9 @@ async function run() {
   await db.all("main").then(console.table);
   console.log(`avg Ping: ${db.ping} ms`);
   console.log(`table main ping is: ${db.tablePing("main")} ms`);
+
+    await db.clear("main");
 }
 
 run().then((_) => console.log("executed cjs test for KeyValue"));
+module.exports = newDB;

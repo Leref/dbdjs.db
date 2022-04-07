@@ -57,7 +57,7 @@ export declare class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
     set(table: string, key: string, value: KeyValueDataOption): Promise<void>;
     get(table: string, key: string): Promise<import("./data.js").Data | undefined>;
     delete(table: string, key: string): Promise<void>;
-    clear(table: string): Promise<void>;
+    clear(table: string): void;
     all(table: string, filter?: (key?: string) => boolean, limit?: number, sortType?: "asc" | "desc"): Promise<import("./data.js").Data[]>;
     get ping(): number;
     tablePing(table: string): number;

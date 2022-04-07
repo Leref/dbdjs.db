@@ -81,7 +81,7 @@ class KeyValue extends tiny_typed_emitter_1.TypedEmitter {
         }
         return await tableClass.delete(key);
     }
-    async clear(table) {
+    clear(table) {
         const tableClass = this.tables.get(table);
         if (!tableClass) {
             throw new error_js_1.KeyValueError(`[InvalidTable] :  Table ${table} not found!`);
