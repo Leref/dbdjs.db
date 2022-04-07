@@ -1,5 +1,4 @@
-import { isBuffer } from "util";
-import { isDate } from "util/types";
+import { types } from "util";
 import { KeyValueDataOption, KeyValueJSONOption } from "../typings/interface";
 import { KeyValueDataValueType } from "../typings/type";
 
@@ -15,7 +14,7 @@ export class Data {
       data.type === "date" &&
       (typeof data.value === "string" ||
         typeof data.value === "number" ||
-        isDate(data.value))
+        types.isDate(data.value))
         ? new Date(data.value)
         : data.type === "bigint" &&
           (typeof data.value === "string" || typeof data.value === "number")
@@ -30,7 +29,7 @@ export class Data {
   }
   toJSON(): KeyValueJSONOption {
     return {
-      value: isDate(this.value)
+      value: types.isDate(this.value)
         ? this.value.toISOString()
         : typeof this.value === "bigint"
         ? this.value.toString()

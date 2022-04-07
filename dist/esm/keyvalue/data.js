@@ -1,4 +1,4 @@
-import { isDate } from "util/types";
+import { types } from "util";
 export class Data {
     value;
     ttl;
@@ -11,7 +11,7 @@ export class Data {
             data.type === "date" &&
                 (typeof data.value === "string" ||
                     typeof data.value === "number" ||
-                    isDate(data.value))
+                    types.isDate(data.value))
                 ? new Date(data.value)
                 : data.type === "bigint" &&
                     (typeof data.value === "string" || typeof data.value === "number")
@@ -26,7 +26,7 @@ export class Data {
     }
     toJSON() {
         return {
-            value: isDate(this.value)
+            value: types.isDate(this.value)
                 ? this.value.toISOString()
                 : typeof this.value === "bigint"
                     ? this.value.toString()

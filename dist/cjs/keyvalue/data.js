@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Data = void 0;
-const types_1 = require("util/types");
+const util_1 = require("util");
 class Data {
     value;
     ttl;
@@ -14,7 +14,7 @@ class Data {
             data.type === "date" &&
                 (typeof data.value === "string" ||
                     typeof data.value === "number" ||
-                    (0, types_1.isDate)(data.value))
+                    util_1.types.isDate(data.value))
                 ? new Date(data.value)
                 : data.type === "bigint" &&
                     (typeof data.value === "string" || typeof data.value === "number")
@@ -29,7 +29,7 @@ class Data {
     }
     toJSON() {
         return {
-            value: (0, types_1.isDate)(this.value)
+            value: util_1.types.isDate(this.value)
                 ? this.value.toISOString()
                 : typeof this.value === "bigint"
                     ? this.value.toString()
