@@ -345,6 +345,10 @@ export class Table {
       }
     } else {
       this.queue.queued.all = true;
+      const referenceSize = await this.getReferenceSize();
+      if(referenceSize <= this.db.options.cacheOption.limit && referenceSize <= this.db.options.storeOption.maxDataPerFile) {
+        return [...this.cache.data.values()];
+      }
       this.files.forEach((file) => {
         const readData = readFileSync(`${this.path}/${file}`).toString();
         let JSONData;
@@ -528,6 +532,14 @@ export class Table {
     while (i < data.length) {
       await this.set(data[i].key, data[i].options);
       i++;
+    }
+  }
+  async getReferenceSize() {
+    if(typeof this.references === "string") {
+      return Object.keys(JSONParser<Record<string, KeyValueJSONOption>>((await readFile(this.references)).toString())).length;
+    }
+    else {
+      return this.references.size;
     }
   }
 }

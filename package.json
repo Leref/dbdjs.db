@@ -10,7 +10,7 @@
     "require": "./dist/cjs/index.js"
   },
   "scripts": {
-    "test": "node test.js",
+    "test": "node tests/KeyValue/KeyValuecjs.js && node tests/KeyValue/KeyValuemjs.mjs && node tests/readdata.js",
     "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && npm run createpack",
     "createpack": "node tests/pack.js"
   },
@@ -42,7 +42,6 @@
   "files": [
     "dist",
     "package.json",
-    "README.md",
-    ""
+    "README.md"
   ]
 }
