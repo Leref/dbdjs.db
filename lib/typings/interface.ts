@@ -1,10 +1,9 @@
-import { Table } from "../keyvalue/table";
-import { DatabaseEvents } from "./enums";
+import { Table } from "../keyvalue/table.js";
 import {
   CacheReferenceType,
   KeyValueDataValueType,
   RelationalDataValueType,
-} from "./type";
+} from "./type.js";
 
 export interface KeyValueDataOption {
   value: KeyValueDataValueType;

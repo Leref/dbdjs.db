@@ -1,6 +1,6 @@
-import { KeyValueJSONOption } from "../typings/interface";
-import { Cacher } from "./cacher";
-import { Data } from "./data";
+import { KeyValueJSONOption } from "../typings/interface.js";
+import { Cacher } from "./cacher.js";
+import { Data } from "./data.js";
 
 export class Queue {
   queue: {

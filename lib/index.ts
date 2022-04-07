@@ -1,11 +1,11 @@
 export { KeyValue } from "./keyvalue/database.js";
-export * from "./typings/enums"
-export * from "./typings/interface";
-export * from "./typings/type";
+export * from "./typings/enums.js"
+export * from "./typings/interface.js";
+export * from "./typings/type.js";
 
-export * from "./keyvalue/cacher";
-export * from "./keyvalue/data";
-export * from "./keyvalue/error";
-export * from "./keyvalue/queueManager";
-export * from "./keyvalue/table";
-export * from "./utils/functions"
+export * from "./keyvalue/cacher.js";
+export * from "./keyvalue/data.js";
+export * from "./keyvalue/error.js";
+export * from "./keyvalue/queueManager.js";
+export * from "./keyvalue/table.js";
+export * from "./utils/functions.js"

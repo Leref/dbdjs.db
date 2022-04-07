@@ -1,15 +1,14 @@
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { TypedEmitter } from "tiny-typed-emitter";
-import { DatabaseEvents } from "../typings/enums";
+import { DatabaseEvents } from "../typings/enums.js";
 import {
   KeyValueDatabaseOption,
   KeyValueDataOption,
   TypedDatabaseEvents,
-} from "../typings/interface";
-import { CacheReferenceType } from "../typings/type";
-import { KeyValueError } from "./error";
-import { Table } from "./table";
-
+} from "../typings/interface.js";
+import { CacheReferenceType } from "../typings/type.js";
+import { KeyValueError } from "./error.js";
+import { Table } from "./table.js";
 export class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
   tables: Map<string, Table> = new Map<string, Table>();
   options: {
@@ -53,7 +52,7 @@ export class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
       },
       methodOption: {
         allTime: options.methodOption?.allTime ?? 10000,
-        deleteTime: options.methodOption?.deleteTime ?? 100,
+        deleteTime: options.methodOption?.deleteTime ?? 500,
         getTime: options.methodOption?.getTime ?? 1000,
         saveTime: options.methodOption?.saveTime ?? 100,
       },
@@ -128,7 +127,7 @@ export class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
   get ping() {
     const res: number[] = [];
     this.tables.forEach((table) => {
-      res.push(table.ping);
+      res.push(table.getPing());
     });
     return res.reduce((a, b) => a + b) / this.tables.size;
   }
@@ -137,9 +136,19 @@ export class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
     if (!tableClass) {
       throw new KeyValueError(`[InvalidTable] :  Table ${table} not found!`);
     }
-    return tableClass.ping;
+    return tableClass.getPing();
   }
   _debug(header: string, msg: string) {
     this.emit("debug", `[KeyValue](${header}) => ${msg}`);
+  }
+  async bulkSet(
+    table: string,
+    ...data: { key: string; options: KeyValueDataOption }[]
+  ) {
+    const tableClass = this.tables.get(table);
+    if (!tableClass) {
+      throw new KeyValueError(`[InvalidTable] :  Table ${table} not found!`);
+    }
+    return await tableClass.setMultiple(...data);
   }
 }

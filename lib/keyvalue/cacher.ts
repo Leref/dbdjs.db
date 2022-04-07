@@ -1,5 +1,5 @@
-import { KeyValueDatabaseOption } from "../typings/interface";
-import { Data } from "./data";
+import { KeyValueDatabaseOption } from "../typings/interface.js";
+import { Data } from "./data.js";
 
 export class Cacher {
   data: Map<string, Data>;

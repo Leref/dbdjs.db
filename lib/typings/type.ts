@@ -5,7 +5,8 @@ export type KeyValueDataValueType =
   | null
   | boolean
   | Array<KeyValueDataValueType>
-  | ValidJSON;
+  | ValidJSON
+  | Date;
 
 export type ValidJSON = {
   [x: string | number | symbol]:

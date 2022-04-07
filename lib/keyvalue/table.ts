@@ -1,18 +1,18 @@
 import { readdirSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { readFile, rename, rm, writeFile } from "fs/promises";
 import { type } from "os";
-import { DatabaseEvents } from "../typings/enums";
+import { DatabaseEvents } from "../typings/enums.js";
 import {
   HashData,
   KeyValueDataOption,
   KeyValueJSONOption,
   KeyValueSetDataOption,
-} from "../typings/interface";
-import { decrypt, encrypt, JSONParser } from "../utils/functions";
-import { Cacher } from "./cacher";
-import { Data } from "./data";
-import { KeyValue } from "./database";
-import { Queue } from "./queueManager";
+} from "../typings/interface.js";
+import { decrypt, encrypt, JSONParser } from "../utils/functions.js";
+import { Cacher } from "./cacher.js";
+import { Data } from "./data.js";
+import { KeyValue } from "./database.js";
+import { Queue } from "./queueManager.js";
 
 export class Table {
   name: string;
@@ -25,10 +25,14 @@ export class Table {
   routers: Record<string, number> = {};
   ready: boolean = false;
   readyTimestamp: number = -1;
+  #ping: number;
+  #lastPingTimestamp: number;
   constructor(name: string, path: string, db: KeyValue) {
     this.name = name;
     this.path = path;
     this.db = db;
+    this.#ping = -1;
+    this.#lastPingTimestamp = -1;
     this.cache = new Cacher(this.db.options.cacheOption);
     this.references =
       this.db.options.cacheOption.cacheReference === "MEMORY"
@@ -69,6 +73,7 @@ export class Table {
           const newData = new Data({ key, ...value, file });
           this.cache.set(key, newData);
           this.queue.addToQueue("set", newData.file, key, newData);
+          this.setReference(key, file);
           this.routers[newData.file] += 1;
         }
       } else {
@@ -88,11 +93,12 @@ export class Table {
             this._createNewFile();
           }
           file = this._currentFile();
+          this.setReference(key, file);
+          const newData = new Data({ key, ...value, file });
+          this.cache.set(key, newData);
+          this.queue.addToQueue("set", newData.file, key, newData);
+          this.routers[newData.file] += 1;
         }
-        const newData = new Data({ key, ...value, file });
-        this.cache.set(key, newData);
-        this.queue.addToQueue("set", newData.file, key, newData);
-        this.routers[newData.file] += 1;
       }
     }
     if (!this.queue.queued.set) {
@@ -179,7 +185,7 @@ export class Table {
             const timeout = setTimeout(() => {
               this.delete(key);
               clearTimeout(timeout);
-            }, JSONData[key].ttl).unref();
+            }, JSONData[key].ttl);
           }
           this.cache.manualSet(key, new Data({ ...JSONData[key], file }));
           this.setReference(key, file);
@@ -218,9 +224,10 @@ export class Table {
     this.db._debug(
       "TABLE_READY",
       `
-      |----------------|------------------------|
-      | connectionTime | ${(performance.now() - start).toFixed(5)}ms |
-      | readyTimestamp | ${this.readyTimestamp} |`,
+|----------------|---------------|
+| connectionTime |   ${(performance.now() - start).toFixed(5)}ms   |
+| readyTimestamp | ${this.readyTimestamp} |
+|----------------|---------------|`,
     );
   }
   _createNewFile() {
@@ -285,11 +292,11 @@ export class Table {
         this.queue.queue.get.clear();
         this.queue.queued.get = false;
         clearTimeout(timeout);
-      }, this.db.options.methodOption.getTime).unref();
+      }, this.db.options.methodOption.getTime);
       const refTimeout = setTimeout(() => {
         delete this.queue.queue.tempref;
         clearTimeout(refTimeout);
-      }, 5000).unref();
+      }, 5000);
     }
     return data;
   }
@@ -364,7 +371,7 @@ export class Table {
         this.queue.queue.all.clear();
         this.queue.queued.all = false;
         clearTimeout(timeout);
-      }, this.db.options.methodOption.allTime).unref();
+      }, this.db.options.methodOption.allTime);
       if (!filter) {
         res = [...this.queue.queue.all.data.values()];
         res =
@@ -396,6 +403,7 @@ export class Table {
     if (!this.queue.queue.delete.get(file)) {
       this.queue.queue.delete.set(file, new Set());
     }
+    this.cache.delete(key);
     this.queue.addToQueue("delete", file, key);
     if (!this.queue.queued.delete) {
       this.queue.queued.delete = true;
@@ -403,7 +411,7 @@ export class Table {
         await this._deleteUpdate();
         this.queue.queued.delete = false;
         clearTimeout(timeout);
-      }, this.db.options.methodOption.deleteTime).unref();
+      }, this.db.options.methodOption.deleteTime);
     }
   }
   async _deleteUpdate() {
@@ -460,11 +468,66 @@ export class Table {
       recursive: true,
     });
   }
-  get ping() {
-    const randomFile =
-      this.files[Math.floor(Math.random() * this.files.length)];
-    const start = performance.now();
-    readFileSync(`${this.path}/${randomFile}`);
-    return performance.now() - start;
+  getPing() {
+    if (this.#ping !== -1 && Date.now() - this.#lastPingTimestamp < 20000)
+      return this.#ping;
+    else if (
+      this.#ping === -1 ||
+      Date.now() - this.#lastPingTimestamp > 20000
+    ) {
+      const randomFile =
+        this.files[Math.floor(Math.random() * this.files.length)];
+      const encryptOption = this.db.options.encryptOption;
+      const start = Date.now();
+      const file = readFileSync(`${this.path}/${randomFile}`).toString();
+      if (encryptOption.enabled) {
+        const HashData = JSONParser<HashData>(file);
+        if (!HashData.iv) {
+          this.#ping = Date.now() - start;
+          this.#lastPingTimestamp = Date.now();
+          return this.#ping;
+        } else {
+          const descryptData = decrypt(HashData, encryptOption.securitykey);
+        }
+      }
+      this.#ping = Date.now() - start;
+      this.#lastPingTimestamp = Date.now();
+      return this.#ping;
+    } else {
+      return this.#ping;
+    }
+  }
+  async getDataFromFile(fileNumber: number) {
+    const file = `${this.name}_scheme_${fileNumber}${this.db.options.extension}`;
+    const encryptOption = this.db.options.encryptOption;
+    const readData = (await readFile(`${this.path}/${file}`)).toString();
+    if (encryptOption.enabled) {
+      const HashData = JSONParser<HashData>(readData);
+      if (HashData.iv) {
+        const jsonData = JSONParser<Record<string, KeyValueJSONOption>>(
+          decrypt(HashData, encryptOption.securitykey),
+        );
+        const keys = Object.keys(jsonData);
+        for (const key of keys) {
+          jsonData[key] = new Data({ ...jsonData[key], file });
+        }
+        return jsonData;
+      } else {
+        const jsonData =
+          JSONParser<Record<string, KeyValueJSONOption>>(readData);
+        const keys = Object.keys(jsonData);
+        for (const key of keys) {
+          jsonData[key] = new Data({ ...jsonData[key], file });
+        }
+        return jsonData;
+      }
+    }
+  }
+  async setMultiple(...data: { key: string; options: KeyValueDataOption }[]) {
+    let i = 0;
+    while (i < data.length) {
+      await this.set(data[i].key, data[i].options);
+      i++;
+    }
   }
 }
