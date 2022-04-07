@@ -1,9 +1,10 @@
-import { ColumnDatabaseOptions } from "../typings/interface.js";
+import { ColumnDatabaseOptions, ColumnTableOptions } from "../typings/interface.js";
+import { CacheReferenceType } from "../typings/type.js";
 
 export class ColumnDatabase {
   options: {
     cacheOption: {
-      cacheReference: import("d:/projects-next/dbdjsdb/dbdjs.db/lib/index").CacheReferenceType;
+      cacheReference: CacheReferenceType;
       limit: number;
       sorted: boolean;
     };
@@ -16,7 +17,7 @@ export class ColumnDatabase {
     };
     path: string;
     storeOption: { maxDataPerFile: number; sorted: boolean };
-    tables: import("d:/projects-next/dbdjsdb/dbdjs.db/lib/typings/interface").ColumnTableOptions;
+    tables: ColumnTableOptions;
   };
   constructor(options: ColumnDatabaseOptions) {
     this.options = this._resolve(options);
