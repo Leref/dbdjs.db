@@ -6,7 +6,7 @@
 [![NPM Downloads](https://img.shields.io/npm/dt/dbdjs.db.svg?maxAge=3600)](https://www.npmjs.com/package/dbdjs.db)
 [![NPM Version](https://img.shields.io/npm/v/dbdjs.db.svg?maxAge=3600)](https://www.npmjs.com/package/dbdjs.db)
 
-# Table Of Contents
+## Table Of Contents
 
 - [About](#about)
 
@@ -19,20 +19,20 @@
   
 - [Links](#links)
 
-# About
+## About
 
 dbdjs.db is a DBMS made in TS to support many database types like KeyValue , WideColumnar , Relational etc
-# Examples
-## Setup
+## Examples
+### Setup
 
 <details> 
 <summary>
   
-  ### KeyValue
+  #### KeyValue
   
   </summary>
 
-#### CJS
+##### CJS
 
 ```js
 const { KeyValue } = require("dbdjs.db");
@@ -49,7 +49,7 @@ db.once("ready", () => {
 db.connect();
 ```
 
-#### ESM
+##### ESM
 
 ```js
 import { KeyValue } from "dbdjs.db";
