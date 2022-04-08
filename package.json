@@ -14,8 +14,7 @@
     "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && npm run createpack",
     "createpack": "node tests/pack.js",
     "exec": "node executions/exec.js",
-    "docs" : "typedoc"
-
+    "docs": "typedoc"
   },
   "engines": {
     "node": ">=16.x"

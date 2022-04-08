@@ -11,28 +11,26 @@
 - [About](#about)
 
 - [Examples](#examples)
-  - [Setup](#setup)
-  - [Set](#set)
-  - [Get](#get)
-  - [Get All](#get-all)
-  - [Delete](#delete)
-  
+  - [KeyValue](#keyvalue)
+    - [Setup](#setup)
+    -[BulkSet](#bulkset)
+    - [Set](#set)
+    - [Get](#get)
+    - [Get All](#get-all)
+    - [Delete](#delete)
+    - [Ping](#ping)
+    - [TablePing](#tableping)
 - [Links](#links)
 
 ## About
 
 dbdjs.db is a DBMS made in TS to support many database types like KeyValue , WideColumnar , Relational etc
 ## Examples
-### Setup
+### KeyValue
+#### Setup
 
 <details> 
-<summary>
-  
-  #### KeyValue
-  
-  </summary>
-
-##### CJS
+<summary>CJS</summary>
 
 ```js
 const { KeyValue } = require("dbdjs.db");
@@ -49,7 +47,9 @@ db.once("ready", () => {
 db.connect();
 ```
 
-##### ESM
+</details>
+<details>
+<summary>ESM</summary>
 
 ```js
 import { KeyValue } from "dbdjs.db";
@@ -68,9 +68,22 @@ db.connect();
 
 </details>
 
-### Set
+#### BulkSet
 
-#### KeyValue
+
+```js
+await db.bulkSet("test",{
+  key : "Number", {
+  value: 1,
+}
+},{
+  key : "String", {
+  value: "hello World",
+}
+});
+```
+
+#### Set
 
 ```js
 await db.set("test", "Number", {
@@ -106,27 +119,45 @@ await db.set("test", "null", {
 });
 ```
 
-### Get
+#### Get
 
 ```js
-const apple = await db.get("test", "fruits");
-const leref = await db.get("test", "leref");
+const string = await db.get("test", "String");
+const numbers = await db.get("test", "Numbers");
 ```
 
-### Get All
+####  All
 
 ```js
 const lerefAndApple = await db.all("test", undefined, Infinity); // Setting limit as Infinity will return all data
 ```
 
-### Delete
+#### Delete
 
 ```js
 await db.delete("test", "fruits");
 await db.delete("test", "leref");
 ```
 
-# Links
+#### Clear
+
+```js
+db.clear("test");
+```
+
+#### Ping
+
+```js
+db.ping;
+```
+
+#### TablePing
+
+```js
+db.tablePing("test"); 
+```
+
+## Links
 
 dbdjs.db was created for ~~[dbd.js](https://www.npmjs.com/package/dbd.js)~~ [aoi.js](https://www.npmjs.com/aoi.js) but now, it's available for anyone to learn and use.
 
