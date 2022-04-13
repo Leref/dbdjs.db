@@ -7,8 +7,14 @@ export function JSONParser(readData) {
     }
     catch {
         const index = readData.lastIndexOf("}");
-        readData = `${readData.slice(0, index + 1)}}`;
-        res = JSON.parse(readData);
+        readData = `${readData.slice(0, index + 1)}`;
+        try {
+            res = JSON.parse(readData);
+        }
+        catch {
+            readData += "}";
+            res = JSON.parse(readData);
+        }
     }
     return res;
 }
@@ -28,5 +34,44 @@ export function decrypt(hash, securitykey) {
         decipher.final(),
     ]);
     return decrpyted.toString();
+}
+export function encryptColumnData(data, securitykey, iv) {
+    const cipher = createCipheriv(algorithm, securitykey, Buffer.from(iv, "hex"));
+    const encrypted = Buffer.concat([cipher.update(data), cipher.final()]);
+    return encrypted.toString("hex");
+}
+export function decryptColumnFile(readData, iv, securitykey) {
+    const decipher = createDecipheriv(algorithm, securitykey, Buffer.from(iv, "hex"));
+    const decrpyted = Buffer.concat([
+        decipher.update(Buffer.from(readData, "hex")),
+        decipher.final(),
+    ]);
+    return decrpyted.toString();
+}
+export function stringify(data) {
+    if (typeof data === "string") {
+        return data;
+    }
+    else if (typeof data === "number") {
+        return data.toString();
+    }
+    else if (typeof data === "boolean") {
+        return data.toString();
+    }
+    else if (data instanceof Date) {
+        return data.toISOString();
+    }
+    else if (typeof data === "object" && !(data instanceof Buffer || data instanceof ReadableStream)) {
+        return JSON.stringify(data);
+    }
+    else if (typeof data === "bigint") {
+        return data.toString();
+    }
+    else if (data instanceof Buffer) {
+        return data.toString("hex");
+    }
+    else {
+        return data.toString();
+    }
 }
 //# sourceMappingURL=functions.js.map

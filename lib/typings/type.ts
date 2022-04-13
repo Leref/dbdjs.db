@@ -19,11 +19,21 @@ export type ValidJSON = {
     | (unknown & { toJSON(): ValidJSON });
 };
 export type CacheReferenceType = "MEMORY" | "DISK";
-export type integer = number;
+export type WideColumnTypes =
+  | "string"
+  | "number"
+  | "boolean"
+  | "bigint"
+  | "object"
+  | "date"
+  | "buffer"
+  | "stream";
+export type WideColumnDataValueType = string | number | boolean | null | Date | Buffer | bigint | object | ReadableStream;
 export type RelationalDataValueType =
   | string
-  | integer
   | number
   | object
-  | BigBuffer;
-export type BigBuffer = Buffer | ArrayBuffer | string | object | BigInt;
+  | BigBuffer
+  | Date
+  | boolean;
+export type BigBuffer = Buffer | ArrayBuffer | bigint | Blob | ReadableStream;

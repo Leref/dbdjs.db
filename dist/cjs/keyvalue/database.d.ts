@@ -37,6 +37,7 @@ export declare class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
         cacheOption: {
             cacheReference: CacheReferenceType;
             limit: number;
+            sortOrder: "ASC" | "DESC";
             sorted: boolean;
         };
         encryptOption: {

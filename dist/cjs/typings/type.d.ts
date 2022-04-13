@@ -6,7 +6,8 @@ export declare type ValidJSON = {
     });
 };
 export declare type CacheReferenceType = "MEMORY" | "DISK";
-export declare type integer = number;
-export declare type RelationalDataValueType = string | integer | number | object | BigBuffer;
-export declare type BigBuffer = Buffer | ArrayBuffer | string | object | BigInt;
+export declare type WideColumnTypes = "string" | "number" | "boolean" | "bigint" | "object" | "date" | "buffer" | "stream";
+export declare type WideColumnDataValueType = string | number | boolean | null | Date | Buffer | bigint | object | ReadableStream;
+export declare type RelationalDataValueType = string | number | object | BigBuffer | Date | boolean;
+export declare type BigBuffer = Buffer | ArrayBuffer | bigint | Blob | ReadableStream;
 //# sourceMappingURL=type.d.ts.map

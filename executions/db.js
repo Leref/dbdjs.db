@@ -10,7 +10,7 @@ const db = new KeyValue({
     },
     encryptOption:{
         securitykey: "a-32-characters-long-string-here",
-        enabled: false,
+        enabled: true,
     },
 });
 db.connect();

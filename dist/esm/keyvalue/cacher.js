@@ -5,6 +5,24 @@ export class Cacher {
         this.data = new Map(init);
         this.options = options;
     }
+    top(n = 1) {
+        let data = [...this.data.values()];
+        if (n === 1)
+            return data[0];
+        data = data.slice(0, n);
+        if (data.length === 1)
+            return data[0];
+        return data;
+    }
+    bottom(n = 1) {
+        let data = [...this.data.values()];
+        if (n === 1)
+            return data[data.length - 1];
+        data = data.slice(data.length - n);
+        if (data.length === 1)
+            return data[0];
+        return data;
+    }
     set(key, value) {
         if (this.options?.sorted) {
             this.data.set(key, value);

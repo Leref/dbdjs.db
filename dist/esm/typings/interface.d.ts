@@ -1,5 +1,6 @@
+import { Column } from "../column/column.js";
 import { Table } from "../keyvalue/table.js";
-import { CacheReferenceType, KeyValueDataValueType, RelationalDataValueType } from "./type.js";
+import { CacheReferenceType, KeyValueDataValueType, RelationalDataValueType, WideColumnTypes } from "./type.js";
 export interface KeyValueDataOption {
     value: KeyValueDataValueType;
     key: string;
@@ -24,6 +25,7 @@ export interface KeyValueDatabaseOption {
     cacheOption?: {
         limit?: number;
         cacheReference?: CacheReferenceType;
+        sortOrder?: "ASC" | "DESC";
         sorted?: boolean;
     };
     storeOption?: {
@@ -91,13 +93,16 @@ export interface TypedDatabaseEvents {
     debug(message: string): void;
 }
 export interface ColumnDatabaseOptions {
-    tables: ColumnTableOptions;
+    encryptOption: {
+        securitykey: string;
+    };
+    tables: ColumnTableOptions[];
     path?: string;
     extension?: string;
     cacheOption?: {
+        limit?: number;
         cacheReference?: CacheReferenceType;
         sorted?: boolean;
-        limit?: number;
     };
     methodOption?: {
         saveTime?: number;
@@ -112,12 +117,18 @@ export interface ColumnDatabaseOptions {
 }
 export interface ColumnTableOptions {
     name: string;
-    columns: ColumnDbColumnData[];
+    columns: Column[];
 }
 export interface ColumnDbColumnData {
+    sortOrder?: "ASC" | "DESC";
     name: string;
     primary: boolean;
-    values: Map<string, RelationalDataValueType>;
-    type: RelationalDataValueType;
+    type: WideColumnTypes;
+}
+export interface CacherOptions {
+    limit?: number;
+    sortOrder?: "ASC" | "DESC";
+    cacheReference?: CacheReferenceType;
+    sorted?: boolean;
 }
 //# sourceMappingURL=interface.d.ts.map

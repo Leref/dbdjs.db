@@ -1,19 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ColumnDatabase = void 0;
-class ColumnDatabase {
+exports.WideColumn = void 0;
+const fs_1 = require("fs");
+const tiny_typed_emitter_1 = require("tiny-typed-emitter");
+const enums_js_1 = require("../typings/enums.js");
+const error_js_1 = require("./error.js");
+const table_js_1 = require("./table.js");
+class WideColumn extends tiny_typed_emitter_1.TypedEmitter {
+    tables = new Map();
     options;
     constructor(options) {
+        super();
         this.options = this._resolve(options);
     }
     _resolve(options) {
+        if (!options.encryptOption?.securitykey) {
+            throw new error_js_1.WideColumnError("DB#encryptOption.securitykey is required.");
+        }
         return {
             cacheOption: {
                 cacheReference: options.cacheOption?.cacheReference ?? "MEMORY",
-                limit: options.cacheOption?.limit ?? 10000,
+                limit: options.cacheOption?.limit ?? 5000,
                 sorted: options.cacheOption?.sorted ?? true,
             },
-            extension: options.extension ?? "sql",
+            extension: options.extension ?? ".sql",
             methodOption: {
                 saveTime: options.methodOption?.saveTime ?? 100,
                 getTime: options.methodOption?.getTime ?? 5000,
@@ -22,12 +32,27 @@ class ColumnDatabase {
             },
             path: options.path ?? "./database",
             storeOption: {
-                maxDataPerFile: options.storeOption?.maxDataPerFile ?? 50000,
-                sorted: options.storeOption?.sorted ?? true,
+                maxDataPerFile: options.storeOption?.maxDataPerFile ?? 200,
             },
             tables: options.tables ?? [],
+            encryptOption: {
+                securitykey: options.encryptOption?.securitykey,
+            },
         };
     }
+    get securitykey() {
+        return this.options.encryptOption.securitykey;
+    }
+    connect() {
+        if (!(0, fs_1.existsSync)(this.options.path))
+            (0, fs_1.mkdirSync)(this.options.path, { recursive: true });
+        for (const table of this.options.tables) {
+            const newTable = new table_js_1.WideColumnTable(table.name, table.columns, this);
+            newTable.connect();
+            this.tables.set(table.name, newTable);
+        }
+        this.emit(enums_js_1.DatabaseEvents.READY);
+    }
 }
-exports.ColumnDatabase = ColumnDatabase;
+exports.WideColumn = WideColumn;
 //# sourceMappingURL=database.js.map

@@ -1,6 +1,9 @@
-import { ColumnDatabaseOptions, ColumnTableOptions } from "../typings/interface.js";
+import { TypedEmitter } from "tiny-typed-emitter";
+import { ColumnDatabaseOptions, ColumnTableOptions, TypedDatabaseEvents } from "../typings/interface.js";
 import { CacheReferenceType } from "../typings/type.js";
-export declare class ColumnDatabase {
+import { WideColumnTable } from "./table.js";
+export declare class WideColumn extends TypedEmitter<TypedDatabaseEvents> {
+    tables: Map<string, WideColumnTable>;
     options: {
         cacheOption: {
             cacheReference: CacheReferenceType;
@@ -17,9 +20,11 @@ export declare class ColumnDatabase {
         path: string;
         storeOption: {
             maxDataPerFile: number;
-            sorted: boolean;
         };
-        tables: ColumnTableOptions;
+        tables: ColumnTableOptions[];
+        encryptOption: {
+            securitykey: string;
+        };
     };
     constructor(options: ColumnDatabaseOptions);
     _resolve(options: ColumnDatabaseOptions): {
@@ -38,9 +43,13 @@ export declare class ColumnDatabase {
         path: string;
         storeOption: {
             maxDataPerFile: number;
-            sorted: boolean;
         };
-        tables: ColumnTableOptions;
+        tables: ColumnTableOptions[];
+        encryptOption: {
+            securitykey: string;
+        };
     };
+    get securitykey(): string;
+    connect(): void;
 }
 //# sourceMappingURL=database.d.ts.map

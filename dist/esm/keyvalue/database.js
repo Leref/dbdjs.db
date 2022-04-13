@@ -20,6 +20,7 @@ export class KeyValue extends TypedEmitter {
             cacheOption: {
                 cacheReference: options.cacheOption?.cacheReference ?? "MEMORY",
                 limit: 10000,
+                sortOrder: options.cacheOption?.sortOrder ?? "DESC",
                 sorted: options.cacheOption?.sorted ?? false,
             },
             encryptOption: {

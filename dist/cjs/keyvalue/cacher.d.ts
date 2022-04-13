@@ -1,9 +1,11 @@
-import { KeyValueDatabaseOption } from "../typings/interface.js";
+import { CacherOptions } from "../typings/interface.js";
 import { Data } from "./data.js";
 export declare class Cacher {
     data: Map<string, Data>;
-    options: KeyValueDatabaseOption["cacheOption"];
-    constructor(options: KeyValueDatabaseOption["cacheOption"], init?: Readonly<Readonly<[string, Data][]>>);
+    options: CacherOptions;
+    constructor(options: CacherOptions, init?: Readonly<Readonly<[string, Data][]>>);
+    top(n?: number): Data | Data[];
+    bottom(n?: number): Data | Data[];
     set(key: string, value: Data): this | undefined;
     manualSet(key: string, value: Data): void;
     get(key: string): Data | undefined;

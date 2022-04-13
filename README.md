@@ -13,7 +13,7 @@
 - [Examples](#examples)
   - [KeyValue](#keyvalue)
     - [Setup](#setup)
-    -[BulkSet](#bulkset)
+    - [BulkSet](#bulkset)
     - [Set](#set)
     - [Get](#get)
     - [Get All](#all)
