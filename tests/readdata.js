@@ -1,6 +1,6 @@
 const fs = require("fs/promises");
 
-console.log("KeyValue")
+console.log("KeyValue");
 
 fs.readdir("./database/main/").then((d) => {
   d.forEach((f) => {
@@ -10,12 +10,16 @@ fs.readdir("./database/main/").then((d) => {
   });
 });
 
-console.log("WideColumn")
+console.log("WideColumn");
 
 fs.readdir("./columndatabase/main/").then((d) => {
   d.forEach((f) => {
-    fs.readFile(`./columndatabase/main/${f}`).then((b) => {
-      console.log(`${f} -> ${b.byteLength} bytes`);
+    fs.readdir(`./columndatabase/main/${f}`).then((files) => {
+      files.forEach((file) => {
+        fs.readFile(`./columndatabase/main/${f}/${file}`).then((b) => {
+          console.log(`${f} -> ${b.byteLength} bytes`);
+        });
+      });
     });
   });
 });
