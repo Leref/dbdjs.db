@@ -395,6 +395,13 @@ class Column {
     unload() {
         this.table.columns = this.table.columns.filter((x) => x.name !== this.name);
     }
+    async bulkSet(...data) {
+        if (!this.memMap)
+            return;
+        data.forEach(async (x) => {
+            await this.set(x[0], x[1]);
+        });
+    }
 }
 exports.Column = Column;
 //# sourceMappingURL=column.js.map

@@ -331,4 +331,47 @@ export class WideColumnTable {
     }
     col.unload();
   }
+  async bulkSet(
+    ...data: [
+      secondaryColumnData: {
+        name: string;
+        value: WideColumnDataValueType;
+      },
+      primaryColumnData: {
+        name: string;
+        value: WideColumnDataValueType;
+      },
+    ][]
+  ) {
+    for (const [secondaryColumnData, primaryColumnData] of data) {
+      if (this.primary.name !== primaryColumnData.name) {
+        throw new WideColumnError("Primary Column Name Does Not Match");
+      }
+      const column = this.columns.find(
+        (x) => x.name === secondaryColumnData.name,
+      );
+      if (!column) {
+        throw new WideColumnError("Secondary Column Name Does Not Match");
+      }
+      if (!this.primary.matchType(primaryColumnData.value)) {
+        throw new WideColumnError(
+          "Primary Column Value Does Not Match the Type: " + this.primary.type,
+        );
+      }
+      if (!column.matchType(secondaryColumnData.value)) {
+        throw new WideColumnError(
+          "Secondary Column Value Does Not Match the Type: " + column.type,
+        );
+      }
+      const data = new WideColumnData({
+        primaryColumnName: this.primary.name,
+        primaryColumnValue: primaryColumnData.value,
+        primaryColumnType: this.primary.type,
+        secondaryColumnName: column.name,
+        secondaryColumnValue: secondaryColumnData.value,
+        secondaryColumnType: column.type,
+      });
+      await column.set(primaryColumnData.value, data);
+    }
+  }
 }

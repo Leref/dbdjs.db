@@ -68,5 +68,15 @@ export declare class WideColumn extends TypedEmitter<TypedDatabaseEvents> {
     clearColumn(table: string, column: string): void;
     clear(): void;
     disconnect(): void;
+    bulkSet(table: string, ...data: [
+        secondaryColumnData: {
+            name: string;
+            value: WideColumnDataValueType;
+        },
+        primaryColumnData: {
+            name: string;
+            value: WideColumnDataValueType;
+        }
+    ][]): Promise<void>;
 }
 //# sourceMappingURL=database.d.ts.map

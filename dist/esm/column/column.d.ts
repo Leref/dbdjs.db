@@ -38,5 +38,6 @@ export declare class Column {
     getTransactionLog(): Promise<string>;
     clear(): void;
     unload(): void;
+    bulkSet(...data: [WideColumnDataValueType, WideColumnData][]): Promise<void>;
 }
 //# sourceMappingURL=column.d.ts.map

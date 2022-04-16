@@ -157,8 +157,8 @@ export class WideColumn extends TypedEmitter<TypedDatabaseEvents> {
     if (!tableObj) throw new WideColumnError(`Table ${table} not found`);
     tableObj.clearColumn(column);
   }
-  clear(){
-    for(const table of this.tables.values()){
+  clear() {
+    for (const table of this.tables.values()) {
       table.clear();
     }
   }
@@ -166,5 +166,22 @@ export class WideColumn extends TypedEmitter<TypedDatabaseEvents> {
     for (const table of this.tables.values()) {
       table.disconnect();
     }
+  }
+  async bulkSet(
+    table: string,
+    ...data: [
+      secondaryColumnData: {
+        name: string;
+        value: WideColumnDataValueType;
+      },
+      primaryColumnData: {
+        name: string;
+        value: WideColumnDataValueType;
+      },
+    ][]
+  ) {
+    const tableObj = this.tables.get(table);
+    if (!tableObj) throw new WideColumnError(`Table ${table} not found`);
+    await tableObj.bulkSet(...data);
   }
 }

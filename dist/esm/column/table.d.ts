@@ -32,5 +32,15 @@ export declare class WideColumnTable {
     clear(): void;
     disconnect(): void;
     unloadColumn(column: string): void;
+    bulkSet(...data: [
+        secondaryColumnData: {
+            name: string;
+            value: WideColumnDataValueType;
+        },
+        primaryColumnData: {
+            name: string;
+            value: WideColumnDataValueType;
+        }
+    ][]): Promise<void>;
 }
 //# sourceMappingURL=table.d.ts.map

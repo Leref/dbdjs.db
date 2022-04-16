@@ -125,5 +125,11 @@ export class WideColumn extends TypedEmitter {
             table.disconnect();
         }
     }
+    async bulkSet(table, ...data) {
+        const tableObj = this.tables.get(table);
+        if (!tableObj)
+            throw new WideColumnError(`Table ${table} not found`);
+        await tableObj.bulkSet(...data);
+    }
 }
 //# sourceMappingURL=database.js.map

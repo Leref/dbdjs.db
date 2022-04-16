@@ -128,6 +128,12 @@ class WideColumn extends tiny_typed_emitter_1.TypedEmitter {
             table.disconnect();
         }
     }
+    async bulkSet(table, ...data) {
+        const tableObj = this.tables.get(table);
+        if (!tableObj)
+            throw new error_js_1.WideColumnError(`Table ${table} not found`);
+        await tableObj.bulkSet(...data);
+    }
 }
 exports.WideColumn = WideColumn;
 //# sourceMappingURL=database.js.map
