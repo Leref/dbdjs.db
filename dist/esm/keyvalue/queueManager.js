@@ -1,5 +1,5 @@
 import { Cacher } from "./cacher.js";
-export class Queue {
+export class KeyValueQueue {
     queue;
     queued;
     constructor() {

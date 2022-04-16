@@ -6,7 +6,12 @@ import {
   ColumnTableOptions,
   TypedDatabaseEvents,
 } from "../typings/interface.js";
-import { CacheReferenceType } from "../typings/type.js";
+import {
+  CacheReferenceType,
+  WideColumnDataValueType,
+} from "../typings/type.js";
+import { WideColumnMemMap } from "./cacher.js";
+import { WideColumnData } from "./data.js";
 import { WideColumnError } from "./error.js";
 import { WideColumnTable } from "./table.js";
 
@@ -20,9 +25,7 @@ export class WideColumn extends TypedEmitter<TypedDatabaseEvents> {
     };
     extension: string;
     methodOption: {
-      saveTime: number;
       getTime: number;
-      allTime: number;
       deleteTime: number;
     };
     path: string;
@@ -48,9 +51,7 @@ export class WideColumn extends TypedEmitter<TypedDatabaseEvents> {
       },
       extension: options.extension ?? ".sql",
       methodOption: {
-        saveTime: options.methodOption?.saveTime ?? 100,
         getTime: options.methodOption?.getTime ?? 5000,
-        allTime: options.methodOption?.allTime ?? 5000,
         deleteTime: options.methodOption?.deleteTime ?? 100,
       },
       path: options.path ?? "./database",
@@ -75,5 +76,95 @@ export class WideColumn extends TypedEmitter<TypedDatabaseEvents> {
       this.tables.set(table.name, newTable);
     }
     this.emit(DatabaseEvents.READY);
+  }
+  async set(
+    table: string,
+    columnData: {
+      name: string;
+      value: WideColumnDataValueType;
+    },
+    primaryColumnData: {
+      name: string;
+      value: WideColumnDataValueType;
+    },
+  ) {
+    const tableObj = this.tables.get(table);
+    if (!tableObj) throw new WideColumnError(`Table ${table} not found`);
+    await tableObj.set(columnData, primaryColumnData);
+  }
+  async get(table: string, column: string, primary: WideColumnDataValueType) {
+    const tableObj = this.tables.get(table);
+    if (!tableObj) throw new WideColumnError(`Table ${table} not found`);
+    return await tableObj.get(column, primary);
+  }
+  async delete(
+    table: string,
+    column: string,
+    primary: WideColumnDataValueType,
+  ) {
+    const tableObj = this.tables.get(table);
+    if (!tableObj) throw new WideColumnError(`Table ${table} not found`);
+    await tableObj.delete(column, primary);
+  }
+  async all(
+    table: string,
+    column: string,
+    filter: (
+      value: WideColumnData,
+      key?: WideColumnDataValueType,
+      cacher?: WideColumnMemMap,
+    ) => boolean,
+    limit = 10,
+  ) {
+    const tableObj = this.tables.get(table);
+    if (!tableObj) throw new WideColumnError(`Table ${table} not found`);
+    return await tableObj.all(column, filter, limit);
+  }
+  async getAllData(table: string, column: string) {
+    const tableObj = this.tables.get(table);
+    if (!tableObj) throw new WideColumnError(`Table ${table} not found`);
+    return await tableObj.getAllData(column);
+  }
+  get ping() {
+    let ping = 0;
+    for (const table of this.tables.values()) {
+      ping += Number(table.ping);
+    }
+    return ping / this.tables.size;
+  }
+  tablePing(table: string) {
+    const tableObj = this.tables.get(table);
+    if (!tableObj) throw new WideColumnError(`Table ${table} not found`);
+    return tableObj.ping;
+  }
+  async getTransactionLog(table: string, column: string) {
+    const tableObj = this.tables.get(table);
+    if (!tableObj) throw new WideColumnError(`Table ${table} not found`);
+    return await tableObj.getTransactionLog(column);
+  }
+  async allData(table: string) {
+    const tableObj = this.tables.get(table);
+    if (!tableObj) throw new WideColumnError(`Table ${table} not found`);
+    return await tableObj.allData();
+  }
+  clearTable(table: string) {
+    const tableObj = this.tables.get(table);
+    if (!tableObj) throw new WideColumnError(`Table ${table} not found`);
+    tableObj.clear();
+  }
+  clearColumn(table: string, column: string) {
+    const tableObj = this.tables.get(table);
+    if (!tableObj) throw new WideColumnError(`Table ${table} not found`);
+    tableObj.clearColumn(column);
+  }
+  clear(){
+    for(const table of this.tables.values()){
+      table.clear();
+    }
+  }
+  disconnect() {
+    for (const table of this.tables.values()) {
+      table.disconnect();
+    }
   }
 }

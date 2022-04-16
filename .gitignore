@@ -2,7 +2,7 @@ node_modules
 test.js
 database
 .idea
-/newdatabase
+/olddatabase
 /database
 benchmarking
 /index.js

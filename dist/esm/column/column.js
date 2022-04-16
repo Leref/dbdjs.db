@@ -1,7 +1,7 @@
 import { WideColumnMemMap } from "./cacher.js";
 import { appendFileSync, createReadStream, existsSync, readdirSync, readFileSync, unlinkSync, writeFileSync, } from "fs";
 import path from "path";
-import { decryptColumnFile, encryptColumnData } from "../utils/functions.js";
+import { decryptColumnFile, encryptColumnData, } from "../utils/functions.js";
 import { WideColumnData } from "./data.js";
 import { randomBytes } from "crypto";
 import { readFile } from "fs/promises";
@@ -9,6 +9,7 @@ import { spaceConstant } from "./constants.js";
 export class Column {
     name;
     routers = {};
+    queue;
     type;
     primary;
     sortOrder;
@@ -17,11 +18,16 @@ export class Column {
     path;
     files;
     logIv;
+    logLines;
     constructor(options) {
         this.name = options.name;
         this.type = options.type;
         this.primary = options.primary;
         this.sortOrder = options.sortOrder ?? "DESC";
+        this.queue = {
+            set: false,
+            delete: false,
+        };
     }
     setFiles() {
         this.files = this._getFiles();
@@ -33,12 +39,10 @@ export class Column {
         this.path = path;
     }
     setCache() {
-        this.memMap = !this.primary
-            ? new WideColumnMemMap({
-                ...this.table.db.options.cacheOption,
-                sortOrder: this.sortOrder,
-            })
-            : undefined;
+        this.memMap = new WideColumnMemMap({
+            ...this.table.db.options.cacheOption,
+            sortOrder: this.sortOrder,
+        });
     }
     _getFiles() {
         return readdirSync(this.path).filter((x) => x.endsWith(this.table.db.options.extension));
@@ -79,6 +83,7 @@ export class Column {
         }
         const logData = readFileSync(this.logPath).toString();
         const logDataPerLine = logData.split("\n");
+        this.logLines = logDataPerLine.length - 2;
         const iv = logDataPerLine[0]?.trim();
         this.logIv = iv;
         let u = 2;
@@ -191,6 +196,11 @@ export class Column {
         const iv = this.logIv;
         const encryptedData = encryptColumnData(`[${method}]${spaceConstant}${data}`, this.table.db.securitykey, iv);
         appendFileSync(logFile, encryptedData + "\n");
+        this.logLines++;
+        if (this.logLines > this.table.db.options.cacheOption.limit * 2) {
+            await this.flush();
+            this.newLogCycle();
+        }
     }
     async readIvfromLog() {
         const logFile = this.logPath;
@@ -224,7 +234,14 @@ export class Column {
         const memMap = this.memMap;
         const maxDataPerFile = this.table.db.options.storeOption.maxDataPerFile;
         const data = mem
-            ? [...mem.data.values()]
+            ? [...mem.data.values()].sort((a, b) => {
+                if ((a.secondary.value ?? 0) < (b.secondary.value ?? 0))
+                    return memMap.options.sortOrder === "DESC" ? 1 : -1;
+                else if ((a.secondary.value ?? 0) === (b.secondary.value ?? 0))
+                    return 0;
+                else
+                    return memMap.options.sortOrder === "DESC" ? -1 : 1;
+            })
             : [...(await this.getAllData()).concat(memMap).data.values()].sort((a, b) => {
                 if ((a.secondary.value ?? 0) < (b.secondary.value ?? 0))
                     return memMap.options.sortOrder === "DESC" ? 1 : -1;
@@ -327,15 +344,50 @@ export class Column {
     async delete(primary) {
         if (!this.memMap)
             return;
+        const memMap = this.memMap;
         if (!this.files.length) {
-            return this.memMap.delete(primary);
+            return memMap.delete(primary);
         }
         else {
-            const allData = (await this.getAllData()).concat(this.memMap);
-            allData.delete(primary);
-            this.flush(allData);
-            this.newLogCycle();
+            this.table.queue.addToQueue("delete", this.name, primary);
+            if (!this.table.queue.queued.delete) {
+                this.table.queue.queued.delete = true;
+                const timeout = setTimeout(async () => {
+                    const allData = (await this.getAllData()).concat(memMap);
+                    allData.deleteDatas(...(this.table.queue.queue.delete.get(this.name)?.values() || []));
+                    await this.flush(allData);
+                    this.newLogCycle();
+                    this.table.queue.queued.delete = false;
+                    this.table.queue.queue.delete.clear();
+                    clearTimeout(timeout);
+                }, this.table.db.options.methodOption.deleteTime);
+            }
         }
+    }
+    async getTransactionLog() {
+        const logFile = this.logPath;
+        const data = await readFile(logFile, "utf8");
+        const dataPerLine = data.split("\n");
+        const iv = dataPerLine[0];
+        let i = 2;
+        const res = [];
+        while (i < dataPerLine.length) {
+            const line = decryptColumnFile(dataPerLine[i], iv, this.table.db.securitykey);
+            res.push(line);
+            i++;
+        }
+        return res.join("\n");
+    }
+    clear() {
+        this.newLogCycle();
+        this.files.forEach((file) => {
+            unlinkSync(path.join(this.path, file));
+        });
+        this.memMap.clear();
+        this.files = [];
+    }
+    unload() {
+        this.table.columns = this.table.columns.filter((x) => x.name !== this.name);
     }
 }
 //# sourceMappingURL=column.js.map

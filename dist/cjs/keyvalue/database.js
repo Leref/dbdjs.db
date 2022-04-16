@@ -120,6 +120,12 @@ class KeyValue extends tiny_typed_emitter_1.TypedEmitter {
         }
         return await tableClass.setMultiple(...data);
     }
+    disconnect() {
+        this.tables.clear();
+        this.ready = false;
+        this.readyTimestamp = -1;
+        this.emit(enums_js_1.DatabaseEvents.DISCONNECT);
+    }
 }
 exports.KeyValue = KeyValue;
 //# sourceMappingURL=database.js.map

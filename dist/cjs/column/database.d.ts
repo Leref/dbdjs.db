@@ -1,6 +1,8 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 import { ColumnDatabaseOptions, ColumnTableOptions, TypedDatabaseEvents } from "../typings/interface.js";
-import { CacheReferenceType } from "../typings/type.js";
+import { CacheReferenceType, WideColumnDataValueType } from "../typings/type.js";
+import { WideColumnMemMap } from "./cacher.js";
+import { WideColumnData } from "./data.js";
 import { WideColumnTable } from "./table.js";
 export declare class WideColumn extends TypedEmitter<TypedDatabaseEvents> {
     tables: Map<string, WideColumnTable>;
@@ -12,9 +14,7 @@ export declare class WideColumn extends TypedEmitter<TypedDatabaseEvents> {
         };
         extension: string;
         methodOption: {
-            saveTime: number;
             getTime: number;
-            allTime: number;
             deleteTime: number;
         };
         path: string;
@@ -35,9 +35,7 @@ export declare class WideColumn extends TypedEmitter<TypedDatabaseEvents> {
         };
         extension: string;
         methodOption: {
-            saveTime: number;
             getTime: number;
-            allTime: number;
             deleteTime: number;
         };
         path: string;
@@ -51,5 +49,24 @@ export declare class WideColumn extends TypedEmitter<TypedDatabaseEvents> {
     };
     get securitykey(): string;
     connect(): void;
+    set(table: string, columnData: {
+        name: string;
+        value: WideColumnDataValueType;
+    }, primaryColumnData: {
+        name: string;
+        value: WideColumnDataValueType;
+    }): Promise<void>;
+    get(table: string, column: string, primary: WideColumnDataValueType): Promise<string | number | bigint | boolean | object | null | undefined>;
+    delete(table: string, column: string, primary: WideColumnDataValueType): Promise<void>;
+    all(table: string, column: string, filter: (value: WideColumnData, key?: WideColumnDataValueType, cacher?: WideColumnMemMap) => boolean, limit?: number): Promise<WideColumnData[] | undefined>;
+    getAllData(table: string, column: string): Promise<WideColumnMemMap>;
+    get ping(): number;
+    tablePing(table: string): number;
+    getTransactionLog(table: string, column: string): Promise<string>;
+    allData(table: string): Promise<any[]>;
+    clearTable(table: string): void;
+    clearColumn(table: string, column: string): void;
+    clear(): void;
+    disconnect(): void;
 }
 //# sourceMappingURL=database.d.ts.map

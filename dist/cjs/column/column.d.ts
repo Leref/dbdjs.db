@@ -6,14 +6,16 @@ import { WideColumnData } from "./data.js";
 export declare class Column {
     name: string;
     routers: Record<string, number>;
+    queue: Record<"set" | "delete", boolean>;
     type: WideColumnTypes;
     primary: boolean;
     sortOrder: "ASC" | "DESC";
-    memMap?: WideColumnMemMap;
+    memMap: WideColumnMemMap;
     table: WideColumnTable;
     path: string;
     files: string[];
     logIv: string;
+    logLines: number;
     constructor(options: ColumnDbColumnData);
     setFiles(): void;
     setTable(table: WideColumnTable): void;
@@ -33,5 +35,8 @@ export declare class Column {
     getAllData(): Promise<WideColumnMemMap>;
     eval(str: string): Promise<any>;
     delete(primary: WideColumnDataValueType): Promise<boolean | undefined>;
+    getTransactionLog(): Promise<string>;
+    clear(): void;
+    unload(): void;
 }
 //# sourceMappingURL=column.d.ts.map

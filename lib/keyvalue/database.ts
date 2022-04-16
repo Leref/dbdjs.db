@@ -44,7 +44,7 @@ export class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
       cacheOption: {
         cacheReference: options.cacheOption?.cacheReference ?? "MEMORY",
         limit: 10000,
-        sortOrder : options.cacheOption?.sortOrder ?? "DESC",
+        sortOrder: options.cacheOption?.sortOrder ?? "DESC",
         sorted: options.cacheOption?.sorted ?? false,
       },
       encryptOption: {
@@ -151,5 +151,11 @@ export class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
       throw new KeyValueError(`[InvalidTable] :  Table ${table} not found!`);
     }
     return await tableClass.setMultiple(...data);
+  }
+  disconnect() {
+    this.tables.clear();
+    this.ready = false;
+    this.readyTimestamp = -1;
+    this.emit(DatabaseEvents.DISCONNECT);
   }
 }

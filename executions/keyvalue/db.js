@@ -1,7 +1,7 @@
-const { KeyValue } = require( "../dist/cjs/index.js" );
+const { KeyValue } = require( "../../dist/cjs/index.js" );
 
 const db = new KeyValue({
-    tables:["submain"],
+    tables:["main","submain"],
     methodOption: {
         saveTime: 100,
         deleteTime: 1000,

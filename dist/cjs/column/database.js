@@ -25,9 +25,7 @@ class WideColumn extends tiny_typed_emitter_1.TypedEmitter {
             },
             extension: options.extension ?? ".sql",
             methodOption: {
-                saveTime: options.methodOption?.saveTime ?? 100,
                 getTime: options.methodOption?.getTime ?? 5000,
-                allTime: options.methodOption?.allTime ?? 5000,
                 deleteTime: options.methodOption?.deleteTime ?? 100,
             },
             path: options.path ?? "./database",
@@ -52,6 +50,83 @@ class WideColumn extends tiny_typed_emitter_1.TypedEmitter {
             this.tables.set(table.name, newTable);
         }
         this.emit(enums_js_1.DatabaseEvents.READY);
+    }
+    async set(table, columnData, primaryColumnData) {
+        const tableObj = this.tables.get(table);
+        if (!tableObj)
+            throw new error_js_1.WideColumnError(`Table ${table} not found`);
+        await tableObj.set(columnData, primaryColumnData);
+    }
+    async get(table, column, primary) {
+        const tableObj = this.tables.get(table);
+        if (!tableObj)
+            throw new error_js_1.WideColumnError(`Table ${table} not found`);
+        return await tableObj.get(column, primary);
+    }
+    async delete(table, column, primary) {
+        const tableObj = this.tables.get(table);
+        if (!tableObj)
+            throw new error_js_1.WideColumnError(`Table ${table} not found`);
+        await tableObj.delete(column, primary);
+    }
+    async all(table, column, filter, limit = 10) {
+        const tableObj = this.tables.get(table);
+        if (!tableObj)
+            throw new error_js_1.WideColumnError(`Table ${table} not found`);
+        return await tableObj.all(column, filter, limit);
+    }
+    async getAllData(table, column) {
+        const tableObj = this.tables.get(table);
+        if (!tableObj)
+            throw new error_js_1.WideColumnError(`Table ${table} not found`);
+        return await tableObj.getAllData(column);
+    }
+    get ping() {
+        let ping = 0;
+        for (const table of this.tables.values()) {
+            ping += Number(table.ping);
+        }
+        return ping / this.tables.size;
+    }
+    tablePing(table) {
+        const tableObj = this.tables.get(table);
+        if (!tableObj)
+            throw new error_js_1.WideColumnError(`Table ${table} not found`);
+        return tableObj.ping;
+    }
+    async getTransactionLog(table, column) {
+        const tableObj = this.tables.get(table);
+        if (!tableObj)
+            throw new error_js_1.WideColumnError(`Table ${table} not found`);
+        return await tableObj.getTransactionLog(column);
+    }
+    async allData(table) {
+        const tableObj = this.tables.get(table);
+        if (!tableObj)
+            throw new error_js_1.WideColumnError(`Table ${table} not found`);
+        return await tableObj.allData();
+    }
+    clearTable(table) {
+        const tableObj = this.tables.get(table);
+        if (!tableObj)
+            throw new error_js_1.WideColumnError(`Table ${table} not found`);
+        tableObj.clear();
+    }
+    clearColumn(table, column) {
+        const tableObj = this.tables.get(table);
+        if (!tableObj)
+            throw new error_js_1.WideColumnError(`Table ${table} not found`);
+        tableObj.clearColumn(column);
+    }
+    clear() {
+        for (const table of this.tables.values()) {
+            table.clear();
+        }
+    }
+    disconnect() {
+        for (const table of this.tables.values()) {
+            table.disconnect();
+        }
     }
 }
 exports.WideColumn = WideColumn;

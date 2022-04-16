@@ -1,4 +1,10 @@
-import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "fs";
+import {
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "fs";
 import { readFile, rename, rm, writeFile } from "fs/promises";
 import { type } from "os";
 import { DatabaseEvents } from "../typings/enums.js";
@@ -12,7 +18,7 @@ import { decrypt, encrypt, JSONParser } from "../utils/functions.js";
 import { Cacher } from "./cacher.js";
 import { Data } from "./data.js";
 import { KeyValue } from "./database.js";
-import { Queue } from "./queueManager.js";
+import { KeyValueQueue as Queue } from "./queueManager.js";
 
 export class Table {
   name: string;
@@ -447,7 +453,7 @@ export class Table {
         });
         const indexof = this.files.indexOf(file);
         this.files.splice(indexof, 1);
-        if(this.files.length === 0) {
+        if (this.files.length === 0) {
           this._createNewFile();
         }
       } else {
@@ -485,7 +491,7 @@ export class Table {
     this.files = [];
     mkdirSync(this.path, {
       recursive: true,
-    })
+    });
     this._createNewFile();
     this._createReferencePath();
   }
@@ -552,12 +558,19 @@ export class Table {
     }
   }
   async getReferenceSize() {
+    const encryptOption = this.db.options.encryptOption;
     if (typeof this.references === "string") {
-      return Object.keys(
-        JSONParser<Record<string, KeyValueJSONOption>>(
-          (await readFile(this.references)).toString(),
-        ),
-      ).length;
+      let readData = (await readFile(this.references)).toString();
+      if(encryptOption.enabled) {
+        const HashData = JSONParser<HashData>(readData);
+        if (HashData.iv) {
+          readData = decrypt(HashData, encryptOption.securitykey);
+        } else {
+          readData = "{}";
+        }
+      }
+      const JSONData = JSONParser<Record<string, KeyValueJSONOption>>(readData);
+      return Object.keys(JSONData).length;
     } else {
       return this.references.size;
     }

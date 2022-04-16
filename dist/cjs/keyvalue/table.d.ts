@@ -2,7 +2,7 @@ import { KeyValueDataOption, KeyValueJSONOption, KeyValueSetDataOption } from ".
 import { Cacher } from "./cacher.js";
 import { Data } from "./data.js";
 import { KeyValue } from "./database.js";
-import { Queue } from "./queueManager.js";
+import { KeyValueQueue as Queue } from "./queueManager.js";
 export declare class Table {
     #private;
     name: string;

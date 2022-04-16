@@ -6,9 +6,11 @@ import { decryptColumnFile, stringify } from "../utils/functions.js";
 import { spaceConstant } from "./constants.js";
 import { WideColumnData } from "./data.js";
 import { WideColumnError } from "./error.js";
+import { WideColumnQueue as Queue } from "./queueManager.js";
 export class WideColumnTable {
     name;
     columns;
+    queue = new Queue();
     primary;
     db;
     reference;
@@ -112,6 +114,7 @@ export class WideColumnTable {
                     const line = dataPerLine[u];
                     const parsedLine = decryptColumnFile(line, iv, this.db.securitykey);
                     const [Primary, Secondary] = parsedLine.split(spaceConstant);
+                    this.queue.addToQueue("get", filePath, Primary, Secondary);
                     if (Primary === stringify(primary)) {
                         return Secondary;
                     }
@@ -138,6 +141,7 @@ export class WideColumnTable {
                         const line = dataPerLine[j];
                         const parsedLine = decryptColumnFile(line, iv, this.db.securitykey);
                         const [Primary, Secondary] = parsedLine.split(spaceConstant);
+                        this.queue.addToQueue("get", filePath, Primary, Secondary);
                         if (Primary === stringify(primary)) {
                             return Secondary;
                         }
@@ -146,6 +150,14 @@ export class WideColumnTable {
                 }
                 u++;
             }
+        }
+        if (!this.queue.queued.get) {
+            this.queue.queued.get = true;
+            const timeout = setTimeout(async () => {
+                this.queue.queue.get.clear();
+                this.queue.queued.get = false;
+                clearTimeout(timeout);
+            }, this.db.options.methodOption.getTime);
         }
     }
     async delete(column, primary) {
@@ -157,7 +169,8 @@ export class WideColumnTable {
             return;
         if (col.memMap.data.has(primary)) {
             col.updateLogs("delete", stringify(primary));
-            return col.delete(primary);
+            this.queue.addToQueue("delete", column, primary);
+            return await col.delete(primary);
         }
         else if (typeof this.reference === "object") {
             const ref = this.reference[column]?.get(primary);
@@ -166,7 +179,7 @@ export class WideColumnTable {
             }
             this.reference[column]?.delete(primary);
             col.updateLogs("delete", stringify(primary));
-            return col.delete(primary);
+            return await col.delete(primary);
         }
         else {
             const refData = await readFile(this.reference, "utf8");
@@ -181,7 +194,7 @@ export class WideColumnTable {
                     col.updateLogs("delete", stringify(primary));
                     refDataPerLine.splice(u, 1);
                     writeFileSync(this.reference, refDataPerLine.join("\n"), "utf8");
-                    return col.delete(primary);
+                    return await col.delete(primary);
                 }
                 u++;
             }
@@ -208,19 +221,75 @@ export class WideColumnTable {
         let ping = 0;
         for (const col of this.columns) {
             if (!col.files.length) {
-                const start = performance.now();
+                const start = Date.now();
                 col.memMap?.random();
-                ping += performance.now() - start;
+                ping += Date.now() - start;
             }
             else {
-                const start = performance.now();
+                const start = Date.now();
                 const file = col.files[Math.floor(Math.random() * col.files.length)];
                 const filePath = path.join(col.path, file);
                 readFileSync(filePath, "utf8");
-                ping += performance.now() - start;
+                ping += Date.now() - start;
             }
         }
-        return (ping / this.columns.length).toFixed(2);
+        return ping / this.columns.length;
+    }
+    async getAllData(column) {
+        const col = this.columns.find((x) => x.name === column);
+        if (!col) {
+            throw new WideColumnError(`Column ${column} Not Found`);
+        }
+        return (await col.getAllData()).concat(col.memMap);
+    }
+    async getTransactionLog(column) {
+        const col = this.columns.find((x) => x.name === column);
+        if (!col) {
+            throw new WideColumnError(`Column ${column} Not Found`);
+        }
+        return await col.getTransactionLog();
+    }
+    async allData() {
+        const obj = new Map();
+        for (const col of this.columns) {
+            const data = (await col.getAllData()).concat(col.memMap);
+            for (const d of data.data.values()) {
+                const da = obj.get(d.primary.value);
+                if (da) {
+                    da[col.name] = d.secondary.value;
+                    obj.set(d.primary.value, da);
+                }
+                else {
+                    obj.set(d.primary.value, {
+                        [this.primary.name]: d.primary.value,
+                        [col.name]: d.secondary.value,
+                    });
+                }
+            }
+        }
+        return [...obj.values()];
+    }
+    clearColumn(column) {
+        const col = this.columns.find((x) => x.name === column);
+        if (!col) {
+            throw new WideColumnError(`Column ${column} Not Found`);
+        }
+        col.clear();
+    }
+    clear() {
+        for (const col of this.columns) {
+            col.clear();
+        }
+    }
+    disconnect() {
+        this.db.tables.delete(this.name);
+    }
+    unloadColumn(column) {
+        const col = this.columns.find((x) => x.name === column);
+        if (!col) {
+            throw new WideColumnError(`Column ${column} Not Found`);
+        }
+        col.unload();
     }
 }
 //# sourceMappingURL=table.js.map

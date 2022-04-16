@@ -1,4 +1,5 @@
 import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
+import { createReadStream } from "fs";
 const algorithm = "aes-256-ctr";
 export function JSONParser(readData) {
     let res;
@@ -74,4 +75,21 @@ export function stringify(data) {
         return data.toString();
     }
 }
+export function countFileLines(filePath) {
+    return new Promise((resolve, reject) => {
+        let lineCount = 0;
+        createReadStream(filePath)
+            .on("data", (buffer) => {
+            let idx = -1;
+            lineCount--; // Because the loop will run once for idx=-1
+            do {
+                idx = buffer.indexOf(10, idx + 1);
+                lineCount++;
+            } while (idx !== -1);
+        }).on("end", () => {
+            resolve(lineCount);
+        }).on("error", reject);
+    });
+}
+;
 //# sourceMappingURL=functions.js.map

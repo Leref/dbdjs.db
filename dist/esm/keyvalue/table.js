@@ -1,10 +1,10 @@
-import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "fs";
+import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync, } from "fs";
 import { readFile, rename, rm, writeFile } from "fs/promises";
 import { DatabaseEvents } from "../typings/enums.js";
 import { decrypt, encrypt, JSONParser } from "../utils/functions.js";
 import { Cacher } from "./cacher.js";
 import { Data } from "./data.js";
-import { Queue } from "./queueManager.js";
+import { KeyValueQueue as Queue } from "./queueManager.js";
 export class Table {
     name;
     path;
@@ -542,8 +542,20 @@ export class Table {
         }
     }
     async getReferenceSize() {
+        const encryptOption = this.db.options.encryptOption;
         if (typeof this.references === "string") {
-            return Object.keys(JSONParser((await readFile(this.references)).toString())).length;
+            let readData = (await readFile(this.references)).toString();
+            if (encryptOption.enabled) {
+                const HashData = JSONParser(readData);
+                if (HashData.iv) {
+                    readData = decrypt(HashData, encryptOption.securitykey);
+                }
+                else {
+                    readData = "{}";
+                }
+            }
+            const JSONData = JSONParser(readData);
+            return Object.keys(JSONData).length;
         }
         else {
             return this.references.size;

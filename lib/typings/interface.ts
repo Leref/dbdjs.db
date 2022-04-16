@@ -103,6 +103,7 @@ export interface RowData {
 
 export interface TypedDatabaseEvents {
   ready(): void;
+  disconnect(): void;
   tableReady(table: Table): void;
   debug(message: string): void;
 }
@@ -120,9 +121,7 @@ export interface ColumnDatabaseOptions {
     sorted?: boolean;
   };
   methodOption?: {
-    saveTime?: number;
     getTime?: number;
-    allTime?: number;
     deleteTime?: number;
   };
   storeOption?: {

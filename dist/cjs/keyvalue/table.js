@@ -12,7 +12,7 @@ class Table {
     name;
     path;
     db;
-    queue = new queueManager_js_1.Queue();
+    queue = new queueManager_js_1.KeyValueQueue();
     files;
     references;
     cache;
@@ -545,8 +545,20 @@ class Table {
         }
     }
     async getReferenceSize() {
+        const encryptOption = this.db.options.encryptOption;
         if (typeof this.references === "string") {
-            return Object.keys((0, functions_js_1.JSONParser)((await (0, promises_1.readFile)(this.references)).toString())).length;
+            let readData = (await (0, promises_1.readFile)(this.references)).toString();
+            if (encryptOption.enabled) {
+                const HashData = (0, functions_js_1.JSONParser)(readData);
+                if (HashData.iv) {
+                    readData = (0, functions_js_1.decrypt)(HashData, encryptOption.securitykey);
+                }
+                else {
+                    readData = "{}";
+                }
+            }
+            const JSONData = (0, functions_js_1.JSONParser)(readData);
+            return Object.keys(JSONData).length;
         }
         else {
             return this.references.size;

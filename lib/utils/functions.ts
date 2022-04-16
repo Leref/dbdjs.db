@@ -1,4 +1,5 @@
 import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
+import { createReadStream } from "fs";
 import { HashData, KeyValueJSONOption } from "../typings/interface";
 import { WideColumnDataValueType } from "../typings/type";
 const algorithm = "aes-256-ctr";
@@ -98,3 +99,20 @@ export function stringify(data:WideColumnDataValueType) {
   }
 
 }
+
+export function countFileLines(filePath:string):Promise<number> {
+  return new Promise((resolve, reject) => {
+  let lineCount = 0;
+  createReadStream(filePath)
+    .on("data", (buffer:Buffer) => {
+      let idx = -1;
+      lineCount--; // Because the loop will run once for idx=-1
+      do {
+        idx = buffer.indexOf(10, idx+1);
+        lineCount++;
+      } while (idx !== -1);
+    }).on("end", () => {
+      resolve(lineCount);
+    }).on("error", reject);
+  });
+};

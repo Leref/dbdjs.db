@@ -2,7 +2,7 @@ import { KeyValueJSONOption } from "../typings/interface.js";
 import { Cacher } from "./cacher.js";
 import { Data } from "./data.js";
 
-export class Queue {
+export class KeyValueQueue {
   queue: {
     set: Map<string, Map<string, Data>>;
     get: Map<string, Record<string, Data | KeyValueJSONOption>>;

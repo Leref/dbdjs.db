@@ -6,5 +6,6 @@ var DatabaseEvents;
     DatabaseEvents["READY"] = "ready";
     DatabaseEvents["TABLE_READY"] = "tableReady";
     DatabaseEvents["DEBUG"] = "debug";
+    DatabaseEvents["DISCONNECT"] = "disconnect";
 })(DatabaseEvents = exports.DatabaseEvents || (exports.DatabaseEvents = {}));
 //# sourceMappingURL=enums.js.map

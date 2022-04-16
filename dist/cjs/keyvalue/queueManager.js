@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Queue = void 0;
+exports.KeyValueQueue = void 0;
 const cacher_js_1 = require("./cacher.js");
-class Queue {
+class KeyValueQueue {
     queue;
     queued;
     constructor() {
@@ -69,5 +69,5 @@ class Queue {
         return this.queue[method].delete(path);
     }
 }
-exports.Queue = Queue;
+exports.KeyValueQueue = KeyValueQueue;
 //# sourceMappingURL=queueManager.js.map

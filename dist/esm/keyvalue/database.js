@@ -117,5 +117,11 @@ export class KeyValue extends TypedEmitter {
         }
         return await tableClass.setMultiple(...data);
     }
+    disconnect() {
+        this.tables.clear();
+        this.ready = false;
+        this.readyTimestamp = -1;
+        this.emit(DatabaseEvents.DISCONNECT);
+    }
 }
 //# sourceMappingURL=database.js.map

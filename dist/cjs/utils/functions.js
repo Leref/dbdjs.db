@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.stringify = exports.decryptColumnFile = exports.encryptColumnData = exports.decrypt = exports.encrypt = exports.JSONParser = void 0;
+exports.countFileLines = exports.stringify = exports.decryptColumnFile = exports.encryptColumnData = exports.decrypt = exports.encrypt = exports.JSONParser = void 0;
 const crypto_1 = require("crypto");
+const fs_1 = require("fs");
 const algorithm = "aes-256-ctr";
 function JSONParser(readData) {
     let res;
@@ -83,4 +84,22 @@ function stringify(data) {
     }
 }
 exports.stringify = stringify;
+function countFileLines(filePath) {
+    return new Promise((resolve, reject) => {
+        let lineCount = 0;
+        (0, fs_1.createReadStream)(filePath)
+            .on("data", (buffer) => {
+            let idx = -1;
+            lineCount--; // Because the loop will run once for idx=-1
+            do {
+                idx = buffer.indexOf(10, idx + 1);
+                lineCount++;
+            } while (idx !== -1);
+        }).on("end", () => {
+            resolve(lineCount);
+        }).on("error", reject);
+    });
+}
+exports.countFileLines = countFileLines;
+;
 //# sourceMappingURL=functions.js.map

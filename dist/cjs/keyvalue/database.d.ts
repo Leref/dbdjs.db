@@ -67,5 +67,6 @@ export declare class KeyValue extends TypedEmitter<TypedDatabaseEvents> {
         key: string;
         options: KeyValueDataOption;
     }[]): Promise<void>;
+    disconnect(): void;
 }
 //# sourceMappingURL=database.d.ts.map
