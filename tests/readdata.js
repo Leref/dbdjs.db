@@ -17,7 +17,7 @@ fs.readdir("./columndatabase/main/").then((d) => {
     fs.readdir(`./columndatabase/main/${f}`).then((files) => {
       files.forEach((file) => {
         fs.readFile(`./columndatabase/main/${f}/${file}`).then((b) => {
-          console.log(`${f} -> ${b.byteLength} bytes`);
+          console.log(`${file} -> ${b.byteLength} bytes`);
         });
       });
     });
