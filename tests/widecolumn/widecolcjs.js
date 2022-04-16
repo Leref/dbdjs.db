@@ -21,7 +21,7 @@ const prime = new Column({
 const db = new WideColumn({
   path: "./columndatabase/",
   encryptOption: {
-    securitykey: "a-32-character-long-string-here",
+    securitykey: "a-32-characters-long-string-here",
   },
   tables: [
     {
