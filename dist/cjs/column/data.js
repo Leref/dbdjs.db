@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WideColumnData = void 0;
-const constants_1 = require("./constants");
+const constants_js_1 = require("./constants.js");
 class WideColumnData {
     primary;
     secondary;
@@ -20,9 +20,9 @@ class WideColumnData {
     toString() {
         return `${this.primary.value
             ?.toString()
-            .replaceAll(constants_1.spaceConstant, "#COLUMNDATASPLITER#")}${constants_1.spaceConstant}${this.secondary.value
+            .replaceAll(constants_js_1.spaceConstant, "#COLUMNDATASPLITER#")}${constants_js_1.spaceConstant}${this.secondary.value
             ?.toString()
-            .replaceAll(constants_1.spaceConstant, "#COLUMNDATASPLITER#")}`;
+            .replaceAll(constants_js_1.spaceConstant, "#COLUMNDATASPLITER#")}`;
     }
     toJSON() {
         return {

@@ -142,4 +142,6 @@ async function exec() {
 
   console.table(debugs);
 }
-exec();
+exec().then((_) => {
+  newset();
+});

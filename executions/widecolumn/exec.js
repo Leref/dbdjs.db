@@ -28,7 +28,6 @@ async function exec() {
   const debugs = {};
 
   async function run() {
-    /*
     let start = performance.now();
     await newset();
     let end = Number((performance.now() - start).toFixed(3));
@@ -62,7 +61,7 @@ async function exec() {
     );
 
     await setTimeout(2000);
-*/
+
     start = performance.now();
     await newall();
     end = Number((performance.now() - start).toFixed(3));
@@ -143,4 +142,6 @@ async function exec() {
 
   console.table(debugs);
 }
-exec();
+exec().then(_ => {
+newset();
+})

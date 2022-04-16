@@ -1,5 +1,5 @@
-import { WideColumnDataValueType, WideColumnTypes } from "../typings/type";
-import { spaceConstant } from "./constants";
+import { WideColumnDataValueType, WideColumnTypes } from "../typings/type.js";
+import { spaceConstant } from "./constants.js";
 
 export class WideColumnData {
   primary: {

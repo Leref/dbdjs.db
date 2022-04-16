@@ -5,7 +5,7 @@ async function newset() {
   let i = 100000;
   console.time("newset");
   while (i --> 0) {
-    await newDB.set("main", "" + i, {
+    await newDB.set("submain", "" + i, {
       value: BigInt(`${i}`),
     });
   }

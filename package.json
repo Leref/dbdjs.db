@@ -13,7 +13,7 @@
     "test": "node tests/keyValue/keyValuecjs.js && node tests/keyValue/keyValuemjs.mjs && node tests/readdata.js",
     "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && npm run createpack",
     "createpack": "node tests/pack.js",
-    "exec": "node executions/exec.js",
+    "exec": "node executions/keyvalue/exec.js && node executions/widecolumn/exec.js",
     "docs": "typedoc"
   },
   "engines": {

@@ -1,6 +1,18 @@
 const fs = require("fs/promises");
 
-fs.readdir("./database/main/").then((d) => {
+console.log("KeyValue")
+
+fs.readdir("./database/submain/").then((d) => {
+  d.forEach((f) => {
+    fs.readFile(`./database/main/${f}`).then((b) => {
+      console.log(`${f} -> ${b.byteLength} bytes`);
+    });
+  });
+});
+
+console.log("WideColumn")
+
+fs.readdir("./columndatabase/main/").then((d) => {
   d.forEach((f) => {
     fs.readFile(`./database/main/${f}`).then((b) => {
       console.log(`${f} -> ${b.byteLength} bytes`);

@@ -1,4 +1,4 @@
-import { WideColumnDataValueType, WideColumnTypes } from "../typings/type";
+import { WideColumnDataValueType, WideColumnTypes } from "../typings/type.js";
 export declare class WideColumnData {
     primary: {
         name: string;

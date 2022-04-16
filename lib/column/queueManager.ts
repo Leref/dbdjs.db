@@ -1,5 +1,4 @@
 import { WideColumnDataValueType } from "../typings/type.js";
-import { WideColumnMemMap } from "./cacher.js";
 import { WideColumnData } from "./data.js";
 
 export class WideColumnQueue {

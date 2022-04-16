@@ -1,4 +1,4 @@
-import { spaceConstant } from "./constants";
+import { spaceConstant } from "./constants.js";
 export class WideColumnData {
     primary;
     secondary;
