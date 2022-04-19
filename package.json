@@ -1,7 +1,7 @@
 {
-  "name": "dbdjs.db",
-  "version": "3.0.0",
-  "description": "dbdjs.db - Database Management System with different types of databases.",
+  "name": "aoi.db",
+  "version": "1.0.0",
+  "description": "aoi.db - Database Management System with different types of databases.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "type": "commonjs",

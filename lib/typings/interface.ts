@@ -1,3 +1,4 @@
+import { ClientOptions } from "ws";
 import { Column } from "../column/column.js";
 import { Table } from "../keyvalue/table.js";
 import {
